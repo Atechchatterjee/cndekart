@@ -6,20 +6,51 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:pg --config=drizzle.config.ts",
+    "migrate": "tsx migrate.ts"
   },
   "dependencies": {
+    "@auth/supabase-adapter": "^0.1.2",
+    "@hookform/resolvers": "^3.1.1",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@supabase/auth-helpers-nextjs": "^0.7.2",
+    "@supabase/supabase-js": "^2.25.0",
+    "@tanstack/react-query": "^4.29.13",
+    "@trpc/client": "^10.30.0",
+    "@trpc/next": "^10.30.0",
+    "@trpc/react-query": "^10.30.0",
+    "@trpc/server": "^10.30.0",
     "@types/node": "20.3.1",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.2.5",
     "autoprefixer": "10.4.14",
+    "class-variance-authority": "^0.6.0",
+    "clsx": "^1.2.1",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.27.0",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.6",
+    "lucide-react": "^0.244.0",
     "next": "13.4.6",
+    "next-auth": "^4.22.1",
     "postcss": "8.4.24",
+    "postgres": "^3.3.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.44.3",
+    "react-icons": "^4.9.0",
+    "superjson": "^1.12.3",
+    "tailwind-merge": "^1.13.2",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.3"
+    "tailwindcss-animate": "^1.0.6",
+    "typescript": "5.1.3",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@xpd/tailwind-3dtransforms": "^1.0.3",
+    "drizzle-kit": "^0.19.1"
   }
 }

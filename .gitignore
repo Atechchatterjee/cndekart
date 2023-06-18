@@ -8,6 +8,11 @@
 # testing
 /coverage
 
+.idea
+
+# drizzle migrations folder
+drizzle
+
 # next.js
 /.next/
 /out/
