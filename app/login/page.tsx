@@ -32,6 +32,7 @@ import {
   signUpFormSchemaPage2,
 } from "@/app/login/formSchema";
 import { supabase } from "@/utils/supabase-client";
+import { trpc } from "@/utils/trpc";
 
 function Page1({
   form,
@@ -59,7 +60,7 @@ function Page1({
           />
           <FormField
             control={form.control}
-            name="emailId"
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email Id</FormLabel>
@@ -72,7 +73,7 @@ function Page1({
           />
           <FormField
             control={form.control}
-            name="phoneNo"
+            name="phone"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
@@ -131,7 +132,7 @@ function Page2({
         <div className="space-y-4">
           <FormField
             control={form.control}
-            name="GSTNo"
+            name="gst"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>GST No.</FormLabel>
@@ -139,7 +140,7 @@ function Page2({
                   <Input placeholder="GST Number" {...field} />
                 </FormControl>
 
-                {!form.formState.errors.GSTNo && (
+                {!form.formState.errors.gst && (
                   <FormDescription>Format: 22AABCU9603R1ZX</FormDescription>
                 )}
                 <FormMessage />
@@ -148,14 +149,14 @@ function Page2({
           />
           <FormField
             control={form.control}
-            name="PanNo"
+            name="pan"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>PAN Number</FormLabel>
                 <FormControl>
                   <Input placeholder="PAN Number" {...field} />
                 </FormControl>
-                {!form.formState.errors.PanNo && (
+                {!form.formState.errors.pan && (
                   <FormDescription>Format: ABCTY1234D</FormDescription>
                 )}
                 <FormMessage />
@@ -204,8 +205,8 @@ function SignUp() {
     resolver: zodResolver(signUpFormSchemaPage1),
     defaultValues: {
       name: "",
-      emailId: "",
-      phoneNo: "",
+      email: "",
+      phone: "",
       password: "",
     },
   });
@@ -213,43 +214,56 @@ function SignUp() {
   const formPage2 = useForm<z.infer<typeof signUpFormSchemaPage2>>({
     resolver: zodResolver(signUpFormSchemaPage2),
     defaultValues: {
-      GSTNo: "",
-      PanNo: "",
+      gst: "",
+      pan: "",
       address: "",
     },
   });
 
-  function submitForm() {
+  const createUserMutation = trpc.createUser.useMutation({
+    onMutate: () => {
+      formPage1.reset();
+      formPage2.reset();
+      setFormPageNo(1);
+    },
+  });
+
+  async function handlePage2Submit() {
     const form1Values = formPage1.getValues();
-    if (form1Values) {
-      supabase.auth.signUp({
-        email: form1Values.emailId,
+    const form2Values = formPage2.getValues();
+
+    if (form1Values && form2Values) {
+      const res = await supabase.auth.signUp({
+        email: form1Values.email,
         password: form1Values.password,
+      });
+
+      const userId = res.data.user?.id;
+
+      createUserMutation.mutate({
+        id: userId ?? "",
+        ...form1Values,
+        ...form2Values,
       });
     }
   }
 
-  if (formPageNo === 1)
-    return (
-      <Page1
-        form={formPage1}
-        onSubmit={(values) => {
-          console.log(values);
-          submitForm();
-          // if (formPage1.formState.isValid) moveToNextPage();
-        }}
-      />
-    );
-  else
-    return (
+  function handlePage1Submit() {
+    if (formPage1.formState.isValid) moveToNextPage();
+  }
+
+  switch (formPageNo) {
+    case 1:
+      return <Page1 form={formPage1} onSubmit={handlePage1Submit} />;
+    case 2:
       <Page2
         form={formPage2}
-        onSubmit={(values) => {
-          console.log(values);
-        }}
+        onSubmit={handlePage2Submit}
         onBack={moveToPrevPage}
-      />
-    );
+      />;
+    default:
+      return <></>;
+  }
 }
 
 export default function Login() {

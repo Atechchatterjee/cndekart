@@ -2,7 +2,7 @@ import * as z from "zod";
 
 export const signUpFormSchemaPage1 = z.object({
   name: z.string().min(1),
-  emailId: z
+  email: z
     .string()
     .regex(
       new RegExp(
@@ -12,7 +12,7 @@ export const signUpFormSchemaPage1 = z.object({
         message: "Not a valid email address",
       }
     ),
-  phoneNo: z.string().min(10, {
+  phone: z.string().min(10, {
     message: "Not a valid phone number",
   }),
   password: z
@@ -24,12 +24,12 @@ export const signUpFormSchemaPage1 = z.object({
 });
 
 export const signUpFormSchemaPage2 = z.object({
-  GSTNo: z
+  gst: z
     .string()
     .regex(
       new RegExp("^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$")
     )
     .optional(),
-  PanNo: z.string().regex(new RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")).optional(),
+  pan: z.string().regex(new RegExp("[A-Z]{5}[0-9]{4}[A-Z]{1}")).optional(),
   address: z.string().optional(),
 });

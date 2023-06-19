@@ -1,7 +1,13 @@
+"use client";
 import { env } from "@/env.mjs";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
 
-export const supabase = createClientComponentClient({
-  supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
-  supabaseKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-});
+export const supabase = createClient(
+  env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  {
+    auth: {
+      persistSession: true,
+    },
+  }
+);
