@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/utils/tailwind-merge";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase-client";
+import { signOut, useSession } from "next-auth/react";
 
 function NavLink({
   href,
@@ -36,7 +36,7 @@ export default function Navbar({
   const path = usePathname();
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState<(typeof activePath)[number]>();
-  const [user, setUser] = useState<any>();
+  const { data: session } = useSession();
 
   // infers link's active state based on the url
   function inferLinkActiveState() {
@@ -49,11 +49,6 @@ export default function Navbar({
 
   useEffect(() => {
     inferLinkActiveState();
-    (async function fetchSession() {
-      const session = await supabase.auth.getSession();
-      if (session && session.data) setUser(session.data.session?.user);
-      console.log({ sessionData: session.data });
-    })();
   }, [path]);
 
   return (
@@ -86,12 +81,11 @@ export default function Navbar({
         <NavLink href="/contact" active={currentPath === "contact"}>
           Contact
         </NavLink>
-        {user && (
+        {session && (
           <NavLink
             href="/login"
             onClick={() => {
-              supabase.auth.signOut();
-              router.refresh();
+              signOut({ redirect: true, callbackUrl: "/login" });
             }}
           >
             Logout

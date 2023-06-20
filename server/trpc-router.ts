@@ -1,13 +1,13 @@
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { createUser } from "./routers/user-route";
+import { registerUser } from "./routers/user-route";
 
 export const t = initTRPC.create({
   transformer: superjson,
 });
 
 export const appRouter = t.router({
-  createUser: createUser(),
+  registerUser: registerUser(),
 });
 
 export type AppRouter = typeof appRouter;

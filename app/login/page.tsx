@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { sora } from "../fonts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsGoogle } from "react-icons/bs";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,8 +31,8 @@ import {
   signUpFormSchemaPage1,
   signUpFormSchemaPage2,
 } from "@/app/login/formSchema";
-import { supabase } from "@/utils/supabase-client";
 import { trpc } from "@/utils/trpc";
+import { signIn } from "next-auth/react";
 
 function Page1({
   form,
@@ -220,7 +220,7 @@ function SignUp() {
     },
   });
 
-  const createUserMutation = trpc.createUser.useMutation({
+  const registerUserMutation = trpc.registerUser.useMutation({
     onMutate: () => {
       formPage1.reset();
       formPage2.reset();
@@ -233,15 +233,7 @@ function SignUp() {
     const form2Values = formPage2.getValues();
 
     if (form1Values && form2Values) {
-      const res = await supabase.auth.signUp({
-        email: form1Values.email,
-        password: form1Values.password,
-      });
-
-      const userId = res.data.user?.id;
-
-      createUserMutation.mutate({
-        id: userId ?? "",
+      registerUserMutation.mutate({
         ...form1Values,
         ...form2Values,
       });
@@ -256,11 +248,13 @@ function SignUp() {
     case 1:
       return <Page1 form={formPage1} onSubmit={handlePage1Submit} />;
     case 2:
-      <Page2
-        form={formPage2}
-        onSubmit={handlePage2Submit}
-        onBack={moveToPrevPage}
-      />;
+      return (
+        <Page2
+          form={formPage2}
+          onSubmit={handlePage2Submit}
+          onBack={moveToPrevPage}
+        />
+      );
     default:
       return <></>;
   }
@@ -269,6 +263,30 @@ function SignUp() {
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const form = useForm<{ email: string; password: string }>({
+    resolver: zodResolver(signUpFormSchemaPage2),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  async function onSubmit() {
+    const formValues = form.getValues();
+    signIn("credentials", {
+      ...formValues,
+      redirect: true,
+      callbackUrl: "http://localhost:3000",
+    })
+      .then((res) => {
+        console.log({ res });
+        if (!res) {
+          alert("Invalid credentials");
+        }
+      })
+      .catch(console.error);
+  }
 
   return (
     <div className="bg-slate-200 h-[100svh] overflow-x-auto">
@@ -297,48 +315,56 @@ export default function Login() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div className="space-y-1">
-                  <Label htmlFor="email">Email Id</Label>
-                  <Input
-                    id="email"
-                    placeholder="example@gmail.com"
-                    value={email}
-                    defaultValue={""}
-                    onChange={(e: any) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="username">Password</Label>
-                  <Input
-                    id="password"
-                    value={password}
-                    defaultValue={""}
-                    placeholder="**********"
-                    type="password"
-                    onChange={(e: any) => setPassword(e.target.value)}
-                  />
-                </div>
+                <FormProvider {...form}>
+                  <form
+                    className="space-y-5"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                  >
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Id</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="example@gmail.com"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="*****************"
+                                type="password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <Button variant="primary" className="w-full" type="submit">
+                      Submit
+                    </Button>
+                    <Button variant="secondary" className="w-full gap-3">
+                      <BsGoogle />
+                      Google Sign
+                    </Button>
+                  </form>
+                </FormProvider>
               </CardContent>
-              <CardFooter className="flex flex-col gap-3">
-                <Button
-                  variant="primary"
-                  className="w-full"
-                  onClick={() => {
-                    supabase.auth
-                      .signInWithPassword({ email, password })
-                      .then(() => {
-                        alert("sign in successfull");
-                      })
-                      .catch(() => alert("sign in failure"));
-                  }}
-                >
-                  Submit
-                </Button>
-                <Button variant="secondary" className="w-full gap-3">
-                  <BsGoogle />
-                  Google Sign
-                </Button>
-              </CardFooter>
             </Card>
           </TabsContent>
           <TabsContent value="password">

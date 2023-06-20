@@ -1,23 +1,39 @@
 import { publicProcedure } from "../trpc";
-import { users } from "@/db/schema/auth";
-import { createInsertSchema } from "drizzle-zod";
-import { db } from "@/db/postgres-drizzle";
-import { eq } from "drizzle-orm";
+import { Prisma, PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+import * as z from "zod";
 
-const apiUser = createInsertSchema(users);
-
-export function createUser() {
-  return publicProcedure.input(apiUser).mutation(async ({ input }) => {
-    const res = await db
-      .select()
-      .from(users)
-      .where(eq(users.email ?? "", input.email ?? ""));
-    console.log(res);
-    if (res.length === 0) {
-      console.log("creating new user");
-      await db.insert(users).values(input);
-    } else {
-      console.log("user already exists");
-    }
-  });
+export function registerUser() {
+  return publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        password: z.string(),
+        phone: z.string(),
+        gst: z.string().optional(),
+        pan: z.string().optional(),
+        address: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const prisma = new PrismaClient();
+      // check if the user already exists
+      const res = await prisma.user.findUnique({
+        where: { email: input.email },
+      });
+      if (!res) {
+        console.log("Creating a new user");
+        const hashedPassword = await bcrypt.hash(input.password, 5);
+        input = { ...input, password: hashedPassword };
+        await prisma.user.create({
+          data: input,
+        });
+      } else {
+        console.log("User already exists");
+      }
+      return {
+        example: "hello",
+      };
+    });
 }
