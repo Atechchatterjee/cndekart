@@ -1,11 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Star {
@@ -56,6 +56,7 @@ model User {
   address       String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  role          User_role @default(USER)
   accounts      Account[]
   sessions      Session[]
 }
@@ -69,4 +70,9 @@ model VerificationRequest {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
+}
+
+enum User_role {
+  USER
+  ADMIN
 }
