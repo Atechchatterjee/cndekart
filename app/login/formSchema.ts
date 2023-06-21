@@ -17,9 +17,9 @@ export const signUpFormSchemaPage1 = z.object({
   }),
   password: z
     .string()
-    .regex(new RegExp("^(?=.*d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$"), {
+    .regex(new RegExp("^(?=.*d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$"), {
       message:
-        "Minimum eight characters, at least one uppercase letter, one lowercase letter and one number",
+        "Minimum six characters, at least one uppercase letter, one lowercase letter and one number",
     }),
 });
 

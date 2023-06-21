@@ -1,4 +1,9 @@
-import type { NextAuthOptions } from "next-auth";
+import type {
+  Awaitable,
+  DefaultSession,
+  NextAuthOptions,
+  Session,
+} from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
 import { PrismaClient, User } from "@prisma/client";
@@ -22,6 +27,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: "example@example.com",
         },
         password: { label: "Password", type: "password" },
+        type: { label: "type", type: "text" },
       },
       async authorize(credentials) {
         console.log("authorizing...");
@@ -46,14 +52,18 @@ export const authOptions: NextAuthOptions = {
           console.log(user);
 
           const dbPassword: string = user.password;
-          if (await bcrypt.compare(userPassword, dbPassword)) return user;
-          else {
+          if (await bcrypt.compare(userPassword, dbPassword)) {
+            if (credentials.type === "ADMIN") {
+              if (user.role === "ADMIN") return user;
+              else throw new Error("Not an admin user");
+            }
+            return user;
+          } else {
             throw new Error("Invalid Password");
           }
         } catch (err) {
           throw err;
         }
-
       },
     }),
   ],
@@ -61,16 +71,20 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, token }) => {
       console.log("session function: ", { session, token });
-      return session;
+      return {
+        ...session,
+        user: { ...session.user, role: token.role },
+      };
     },
     jwt: ({ token, user }) => {
       console.log("jwt function: ", { user });
+      if (user) token.role = (user as User).role;
       return token;
     },
   },
   pages: {
     signIn: "/login",
-    error: "/login",
+    // error: "/login",
   },
 };
 

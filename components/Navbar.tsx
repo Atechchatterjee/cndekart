@@ -85,7 +85,13 @@ export default function Navbar({
           <NavLink
             href="/login"
             onClick={() => {
-              signOut({ redirect: true, callbackUrl: "/login" });
+              signOut({
+                redirect: true,
+                callbackUrl:
+                  (session.user as any)?.role === "ADMIN"
+                    ? "/admin/login"
+                    : "/login",
+              });
             }}
           >
             Logout

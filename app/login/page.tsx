@@ -96,7 +96,7 @@ function Page1({
                 </FormControl>
                 {!form.formState.errors.password && (
                   <FormDescription>
-                    Minimum eight characters, at least one uppercase letter, one
+                    Minimum six characters, at least one uppercase letter, one
                     lowercase letter and one number
                   </FormDescription>
                 )}
@@ -262,9 +262,6 @@ function SignUp() {
 }
 
 export default function Login() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-
   const form = useForm<{ email: string; password: string }>({
     resolver: zodResolver(signUpFormSchemaPage2),
     defaultValues: {
@@ -279,7 +276,7 @@ export default function Login() {
     const res = await signIn("credentials", {
       ...formValues,
       redirect: false,
-    })
+    });
     console.log({ res });
     if (res?.error) {
       if (res.error === "Invalid Password" || res.error === "Empty Credentials")
