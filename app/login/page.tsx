@@ -33,6 +33,7 @@ import {
 } from "@/app/login/formSchema";
 import { trpc } from "@/utils/trpc";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function Page1({
   form,
@@ -271,21 +272,23 @@ export default function Login() {
       password: "",
     },
   });
+  const router = useRouter();
 
   async function onSubmit() {
     const formValues = form.getValues();
-    signIn("credentials", {
+    const res = await signIn("credentials", {
       ...formValues,
-      redirect: true,
-      callbackUrl: "http://localhost:3000",
+      redirect: false,
     })
-      .then((res) => {
-        console.log({ res });
-        if (!res) {
-          alert("Invalid credentials");
-        }
-      })
-      .catch(console.error);
+    console.log({ res });
+    if (res?.error) {
+      if (res.error === "Invalid Password" || res.error === "Empty Credentials")
+        form.setError("password", { message: res.error });
+      if (res.error === "Invalid Email" || res.error === "Empty Credentials")
+        form.setError("email", { message: res.error });
+    } else {
+      router.push("/");
+    }
   }
 
   return (

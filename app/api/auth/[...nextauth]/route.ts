@@ -24,26 +24,36 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email && !credentials?.password) return null;
+        console.log("authorizing...");
+        if (!credentials?.email && !credentials?.password) {
+          throw new Error("Empty Credentials");
+        }
 
         const userEmail: string = credentials?.email || "";
         const userPassword: string = credentials?.password || "";
+        console.log({ userEmail, userPassword });
 
-        const user = await prisma.user.findUnique({
-          where: { email: userEmail },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: userEmail },
+          });
+          if (!user) {
+            throw new Error("Invalid Email");
+          }
+          if (!user.password) {
+            throw new Error("Invalid Password");
+          }
+          console.log(user);
 
-        if (!user) {
-          // throw new Error("User does not exists");
-          return null;
+          const dbPassword: string = user.password;
+          if (await bcrypt.compare(userPassword, dbPassword)) return user;
+          else {
+            throw new Error("Invalid Password");
+          }
+        } catch (err) {
+          throw err;
         }
-        if (!user.password) return null;
 
-        const dbPassword: string = user.password;
-        if (await bcrypt.compare(userPassword, dbPassword)) return user;
-        else {
-          return null;
-        }
       },
     }),
   ],
