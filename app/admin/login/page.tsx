@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { BsGoogle } from "react-icons/bs";
 
@@ -31,6 +32,8 @@ export default function AdminLogin() {
       password: "",
     },
   });
+  const router = useRouter();
+
   async function onSubmit() {
     const res = await signIn("credentials", {
       ...form.getValues(),
@@ -45,7 +48,7 @@ export default function AdminLogin() {
       if (res.error === "Not an admin user")
         form.setError("email", { message: res.error });
     } else {
-      alert("You are an admin");
+      router.push("/admin/dashboard");
     }
   }
   return (
