@@ -1,4 +1,3 @@
-"use client";
 import Navbar from "@/components/Navbar";
 import { sora } from "@/app/fonts";
 import { Button } from "@/components/ui/button";

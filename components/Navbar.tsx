@@ -1,8 +1,8 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/utils/tailwind-merge";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 function NavLink({
@@ -26,30 +26,16 @@ function NavLink({
   );
 }
 
-const activePath = ["browse", "login", "about", "contact"] as const;
-
 export default function Navbar({
   className,
   padding = true,
+  route,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { padding?: boolean }) {
-  const path = usePathname();
-  const router = useRouter();
-  const [currentPath, setCurrentPath] = useState<(typeof activePath)[number]>();
+}: React.HTMLAttributes<HTMLDivElement> & {
+  padding?: boolean;
+  route?: "browse" | "login" | "about" | "contact";
+}) {
   const { data: session } = useSession();
-
-  // infers link's active state based on the url
-  function inferLinkActiveState() {
-    if (
-      activePath.includes(path.split("/")[1] as (typeof activePath)[number])
-    ) {
-      setCurrentPath(path.split("/")[1] as (typeof activePath)[number]);
-    }
-  }
-
-  useEffect(() => {
-    inferLinkActiveState();
-  }, [path]);
 
   return (
     <div
@@ -60,25 +46,26 @@ export default function Navbar({
       )}
       {...props}
     >
-      <Image
-        src="/logo.svg"
-        className="cursor-pointer"
-        width={120}
-        height={24}
-        alt="logo"
-        onClick={() => router.push("/")}
-      />
+      <Link href="/">
+        <Image
+          src="/logo.svg"
+          className="cursor-pointer"
+          width={120}
+          height={24}
+          alt="logo"
+        />
+      </Link>
       <div className="flex gap-8 justify-end w-full text-sm font-medium align-center">
-        <NavLink href="/browse" active={currentPath === "browse"}>
+        <NavLink href="/browse" active={route === "browse"}>
           Browse
         </NavLink>
-        <NavLink href="/login" active={currentPath === "login"}>
+        <NavLink href="/login" active={route === "login"}>
           Login
         </NavLink>
-        <NavLink href="/about" active={currentPath === "about"}>
+        <NavLink href="/about" active={route === "about"}>
           About
         </NavLink>
-        <NavLink href="/contact" active={currentPath === "contact"}>
+        <NavLink href="/contact" active={route === "contact"}>
           Contact
         </NavLink>
         {session && (
