@@ -76,3 +76,41 @@ enum User_role {
   USER
   ADMIN
 }
+
+model Product {
+  id          String          @id @unique
+  title       String
+  description String
+  price       ProductPrices[]
+  gst         String
+  category    Category?
+  unit        Unit?
+  images      ProductImages[]
+}
+
+model Category {
+  id       String  @id @unique
+  category String  @unique
+  product  Product @relation(fields: [category], references: [id])
+}
+
+model Unit {
+  id      String  @id @unique
+  unit    String  @unique
+  product Product @relation(fields: [unit], references: [id])
+}
+
+model ProductPrices {
+  id        String   @id @unique
+  range     String
+  price     Int
+  product   Product  @relation(fields: [id], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductImages {
+  id       String  @id @unique
+  imageUrl String
+  product  Product @relation(fields: [imageUrl], references: [id])
+}
