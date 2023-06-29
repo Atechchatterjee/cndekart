@@ -48,7 +48,7 @@ export default function AdminSidebar({
   active?: "dashboard" | "product" | "queries" | "orders";
 }) {
   return (
-    <div className="fixed flex flex-col top-3 left-3 bottom-3 w-80 bg-white border-r rounded-lg">
+    <div className="fixed flex flex-col top-3 left-3 bottom-3 w-80 bg-white border-r rounded-lg overflow-y-auto overflow-x-hidden">
       <div className="flex items-center h-14 pl-7 pt-5">
         <Link href="/">
           <Image

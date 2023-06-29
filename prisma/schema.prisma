@@ -78,39 +78,45 @@ enum User_role {
 }
 
 model Product {
-  id          String          @id @unique
-  title       String
-  description String
-  price       ProductPrices[]
-  gst         String
-  category    Category?
-  unit        Unit?
-  images      ProductImages[]
+  id               String          @id @unique @default(cuid())
+  title            String
+  description      String
+  priceRelation    ProductPrices[]
+  gst              String
+  categoryRelation Category        @relation(fields: [category], references: [id])
+  category         String          @unique
+  unitRelation     Unit?           @relation(fields: [unit], references: [id])
+  unit             String?         @unique
+  images           ProductImages[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
 }
 
 model Category {
-  id       String  @id @unique
-  category String  @unique
-  product  Product @relation(fields: [category], references: [id])
+  id       String   @id @unique @default(cuid())
+  category String   @unique
+  product  Product?
 }
 
 model Unit {
-  id      String  @id @unique
-  unit    String  @unique
-  product Product @relation(fields: [unit], references: [id])
+  id      String   @id @unique @default(cuid())
+  unit    String   @unique
+  product Product?
 }
 
 model ProductPrices {
-  id        String   @id @unique
-  range     String
-  price     Int
-  product   Product  @relation(fields: [id], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @unique @default(cuid())
+  range           String
+  price           Int
+  productRelation Product? @relation(fields: [product], references: [id])
+  product         String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model ProductImages {
-  id       String  @id @unique
-  imageUrl String
-  product  Product @relation(fields: [imageUrl], references: [id])
+  id        String  @id @unique @default(cuid())
+  imageUrl  String
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id])
 }

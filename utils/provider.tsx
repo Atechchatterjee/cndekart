@@ -9,7 +9,7 @@ function Providers({ children }: React.PropsWithChildren) {
       queries: {
         staleTime: 1000 * 60 * 60,
         refetchOnWindowFocus: false,
-        retry: false, //TODO: change while pushing to production
+        retry: false,
         cacheTime: 100,
       },
     },

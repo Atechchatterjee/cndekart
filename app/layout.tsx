@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ClientProvider } from "@/utils/trpc-provider";
 import Provider from "@/utils/provider";
 import { NextAuthSessionProvider } from "@/utils/SessionProvider";
+import DnDProvider from "@/utils/DndProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +22,11 @@ export default async function RootLayout({
       <body className={inter.className}>
         <NextAuthSessionProvider>
           <ClientProvider>
-            <Provider>
-              <main>{children}</main>
-            </Provider>
+            <DnDProvider>
+              <Provider>
+                <main>{children}</main>
+              </Provider>
+            </DnDProvider>
           </ClientProvider>
         </NextAuthSessionProvider>
       </body>

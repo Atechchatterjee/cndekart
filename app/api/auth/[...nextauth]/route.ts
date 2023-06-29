@@ -6,11 +6,10 @@ import type {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth";
-import { PrismaClient, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/utils/prisma-client";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -30,14 +29,14 @@ export const authOptions: NextAuthOptions = {
         type: { label: "type", type: "text" },
       },
       async authorize(credentials) {
-        console.log("authorizing...");
+        // console.log("authorizing...");
         if (!credentials?.email && !credentials?.password) {
           throw new Error("Empty Credentials");
         }
 
         const userEmail: string = credentials?.email || "";
         const userPassword: string = credentials?.password || "";
-        console.log({ userEmail, userPassword });
+        // console.log({ userEmail, userPassword });
 
         try {
           const user = await prisma.user.findUnique({
@@ -49,7 +48,7 @@ export const authOptions: NextAuthOptions = {
           if (!user.password) {
             throw new Error("Invalid Password");
           }
-          console.log(user);
+          // console.log(user);
 
           const dbPassword: string = user.password;
           if (await bcrypt.compare(userPassword, dbPassword)) {
@@ -70,14 +69,14 @@ export const authOptions: NextAuthOptions = {
   secret: "mysecret",
   callbacks: {
     session: ({ session, token }) => {
-      console.log("session function: ", { session, token });
+      // console.log("session function: ", { session, token });
       return {
         ...session,
         user: { ...session.user, role: token.role },
       };
     },
     jwt: ({ token, user }) => {
-      console.log("jwt function: ", { user });
+      // console.log("jwt function: ", { user });
       if (user) token.role = (user as User).role;
       return token;
     },

@@ -1,7 +1,7 @@
 import { publicProcedure } from "../trpc";
-import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import * as z from "zod";
+import { prisma } from "@/utils/prisma-client";
 
 export function registerUser() {
   return publicProcedure
@@ -17,7 +17,6 @@ export function registerUser() {
       })
     )
     .mutation(async ({ input }) => {
-      const prisma = new PrismaClient();
       // check if the user already exists
       const res = await prisma.user.findUnique({
         where: { email: input.email },
