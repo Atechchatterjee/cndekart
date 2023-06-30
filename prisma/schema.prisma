@@ -80,28 +80,28 @@ enum User_role {
 model Product {
   id               String          @id @unique @default(cuid())
   title            String
-  description      String
+  description      String          @db.VarChar(1000)
   priceRelation    ProductPrices[]
   gst              String
   categoryRelation Category        @relation(fields: [category], references: [id])
-  category         String          @unique
+  category         String
   unitRelation     Unit?           @relation(fields: [unit], references: [id])
-  unit             String?         @unique
+  unit             String?
   images           ProductImages[]
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 }
 
 model Category {
-  id       String   @id @unique @default(cuid())
-  category String   @unique
-  product  Product?
+  id       String    @id @unique @default(cuid())
+  category String    @unique
+  product  Product[]
 }
 
 model Unit {
-  id      String   @id @unique @default(cuid())
-  unit    String   @unique
-  product Product?
+  id      String    @id @unique @default(cuid())
+  unit    String    @unique
+  product Product[]
 }
 
 model ProductPrices {
@@ -119,4 +119,5 @@ model ProductImages {
   imageUrl  String
   productId String  @unique
   product   Product @relation(fields: [productId], references: [id])
+  primary   Boolean @default(false)
 }
