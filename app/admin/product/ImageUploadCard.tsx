@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
 import Dropzone from "react-dropzone";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
 
 function ImagePreview({ images }: { images: any[] }) {
@@ -25,19 +26,23 @@ function ImagePreview({ images }: { images: any[] }) {
 
 export default function ImageUploadCard({
   images,
+  setImagesToUpload,
   onUpload: uploadCb,
   onCreate,
+  isLoading,
 }: {
   images: any[];
+  setImagesToUpload: (images: any[]) => void;
   onUpload?: (images: any[]) => void;
   onCreate?: () => void;
+  isLoading?: boolean;
 }) {
   const handleDrop = useCallback((files: any) => {
     uploadCb && uploadCb(files);
   }, []);
 
   return (
-    <Card className="flex-1 mt-8">
+    <Card className="flex-1">
       <CardContent className="flex flex-col gap-5">
         <Dropzone onDrop={handleDrop}>
           {({ isDragActive, getRootProps, getInputProps }) => (
@@ -65,9 +70,17 @@ export default function ImageUploadCard({
           className="w-full gap-3"
           type="submit"
           size="lg"
-          onClick={() => onCreate && onCreate()}
+          onClick={() => {
+            // resetting images in memory
+            setImagesToUpload([]);
+            if (onCreate) onCreate();
+          }}
         >
-          Create Product
+          {isLoading === true ? (
+            <LoadingSpinner />
+          ) : (
+            <span>Create Product</span>
+          )}
         </Button>
       </CardContent>
     </Card>

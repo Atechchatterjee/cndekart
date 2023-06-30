@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FormProvider, UseFormReturn } from "react-hook-form";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +20,7 @@ import {
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { ProductFormValues } from "./type";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ProductDetailsForm({
   form,
@@ -36,7 +38,7 @@ export default function ProductDetailsForm({
     trpc.fetchCategories.useQuery({}, { enabled: triggerFetchCategories });
 
   return (
-    <Card className="flex-1 mt-8">
+    <Card className="flex-1">
       <CardContent>
         <FormProvider {...form}>
           <form className="space-y-5 mt-5">
@@ -86,6 +88,9 @@ export default function ProductDetailsForm({
                         />
                       </FormControl>
                       <FormMessage />
+                      <FormDescription>
+                        format: "(lower limit)-(upper limit)" eg: 1-2
+                      </FormDescription>
                     </FormItem>
                   )}
                 />
@@ -129,13 +134,15 @@ export default function ProductDetailsForm({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {!isLoadingCategories
-                            ? allCategories?.map((category, i) => (
-                                <SelectItem value={category.id} key={i}>
-                                  {category.category}
-                                </SelectItem>
-                              ))
-                            : "...loading"}
+                          {!isLoadingCategories ? (
+                            allCategories?.map((category, i) => (
+                              <SelectItem value={category.id} key={i}>
+                                {category.category}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <LoadingSpinner className="justify-center" />
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -161,14 +168,16 @@ export default function ProductDetailsForm({
                         <SelectTrigger>
                           <SelectValue placeholder="Product Unit" {...field} />
                         </SelectTrigger>
-                        <SelectContent>
-                          {!isLoadingUnits
-                            ? allUnits?.map((unit, i) => (
-                                <SelectItem value={unit.id} key={i}>
-                                  {unit.unit}
-                                </SelectItem>
-                              ))
-                            : "...loading"}
+                        <SelectContent className="flex flex-col">
+                          {!isLoadingUnits ? (
+                            allUnits?.map((unit, i) => (
+                              <SelectItem value={unit.id} key={i}>
+                                {unit.unit}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <LoadingSpinner className="justify-center" />
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>
