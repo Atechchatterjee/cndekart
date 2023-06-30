@@ -15,16 +15,21 @@ export function createProduct() {
     )
     .mutation(async ({ input }) => {
       console.log("creating product");
-      const createdProduct = await prisma.product.create({
-        data: {
-          title: input.title,
-          description: input.description,
-          unitRelation: { connect: { id: input.unit } },
-          gst: input.gst ?? "",
-          categoryRelation: { connect: { id: input.category } },
-        },
-      });
-      return createdProduct;
+      try {
+        const createdProduct = await prisma.product.create({
+          data: {
+            title: input.title,
+            description: input.description,
+            unitRelation: { connect: { id: input.unit } },
+            gst: input.gst ?? "",
+            categoryRelation: { connect: { id: input.category } },
+          },
+        });
+        return createdProduct;
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
     });
 }
 
