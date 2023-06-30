@@ -24,6 +24,16 @@ const nextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "ik.imagekit.io",
+        port: "",
+        pathname: "/*",
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
