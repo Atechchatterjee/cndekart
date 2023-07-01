@@ -45,7 +45,7 @@ export default async function Browse() {
             className="flex gap-10 border border-slate-200 rounded-lg p-5 h-[14rem] w-full mt-5 hover:border-slate-300 transition-all"
             key={i}
           >
-            {/* @ts-expect-error Server Component */}
+            {/* @ts-ignore-error Server Component */}
             <ProductImage productImages={product.images} />
             <div className="flex flex-col gap-7">
               <div className="flex flex-col gap-3">
@@ -84,3 +84,5 @@ export default async function Browse() {
     </div>
   );
 }
+
+export const revalidate = 60;

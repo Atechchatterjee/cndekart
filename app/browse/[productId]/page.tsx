@@ -36,7 +36,7 @@ export default async function ProductPage({
     <div className="pl-[15rem] pr-[15rem]">
       <Navbar route="browse" padding={false} />
       <div className="flex gap-20 mt-20">
-        {/* @ts-expect-error Server Component */}
+        {/* @ts-ignore-error Server Component */}
         <ProductImage productImages={product?.images} />
         <div className="flex flex-col gap-5">
           <h1 className="text-3xl text-slate-800 font-bold">
