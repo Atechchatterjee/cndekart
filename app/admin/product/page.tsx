@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function Product() {
   const session = await getServerSession(authOptions);
 
-  if (session && (session as any).user.role !== "ADMIN")
+  if (!session || (session as any)?.user?.role !== "ADMIN")
     redirect("/admin/login");
 
   return (
@@ -38,7 +38,7 @@ export default async function Product() {
           </div>
           <CreateProduct />
         </div>
-        {/* @ts-expect-error Server Component */}
+        {/* @ts-ignore-error Server Component */}
         <ProductList />
       </div>
     </div>
