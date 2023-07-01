@@ -71,8 +71,6 @@ export default function ImageUploadCard({
           type="submit"
           size="lg"
           onClick={() => {
-            // resetting images in memory
-            setImagesToUpload([]);
             if (onCreate) onCreate();
           }}
         >
