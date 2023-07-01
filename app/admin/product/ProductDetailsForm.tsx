@@ -89,7 +89,7 @@ export default function ProductDetailsForm({
                       </FormControl>
                       <FormMessage />
                       <FormDescription>
-                        format: "(lower limit)-(upper limit)" eg: 1-2
+                        format: &quot;(lower limit)-(upper limit)&quot; eg: 1-2
                       </FormDescription>
                     </FormItem>
                   )}
