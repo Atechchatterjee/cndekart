@@ -11,4 +11,6 @@ function Dashboard() {
   );
 }
 
-export default () => <WithAuth WrappedComponent={Dashboard} role="ADMIN" />;
+export default function DashboardWithAuth() {
+  return <WithAuth WrappedComponent={Dashboard} role="ADMIN" />;
+}
