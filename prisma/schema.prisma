@@ -82,7 +82,9 @@ model Product {
   title            String
   description      String          @db.VarChar(1000)
   priceRelation    ProductPrices[]
-  gst              String
+  cgst             Float?
+  sgst             Float?
+  igst             Float?
   categoryRelation Category        @relation(fields: [category], references: [id])
   category         String
   unitRelation     Unit?           @relation(fields: [unit], references: [id])
@@ -108,8 +110,8 @@ model ProductPrices {
   id              String   @id @unique @default(cuid())
   range           String
   price           Int
-  productRelation Product? @relation(fields: [product], references: [id])
-  product         String?  @unique
+  productRelation Product? @relation(fields: [product], references: [id], onDelete: Cascade)
+  product         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -117,7 +119,8 @@ model ProductPrices {
 model ProductImages {
   id        String  @id @unique @default(cuid())
   imageUrl  String
-  productId String  @unique
-  product   Product @relation(fields: [productId], references: [id])
+  imageId   String  @unique @default("")
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   primary   Boolean @default(false)
 }
