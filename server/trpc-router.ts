@@ -4,6 +4,8 @@ import { registerUser } from "./routers/user-route";
 import {
   createProduct,
   createProductPrices,
+  createUnit,
+  deleteProduct,
   fetchCategories,
   fetchUnits,
   updateProductWithImageUrl,
@@ -20,6 +22,8 @@ export const appRouter = t.router({
   fetchCategories: fetchCategories(),
   createProductPrices: createProductPrices(),
   updateProductWithImageUrl: updateProductWithImageUrl(),
+  deleteProduct: deleteProduct(),
+  createUnit: createUnit(),
 });
 
 export type AppRouter = typeof appRouter;
