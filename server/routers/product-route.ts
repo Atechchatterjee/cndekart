@@ -1,6 +1,7 @@
 import { publicProcedure } from "../trpc";
 import { prisma } from "@/utils/prisma-client";
 import * as z from "zod";
+import ImageKit from "imagekit";
 
 export function createProduct() {
   return publicProcedure
@@ -10,7 +11,9 @@ export function createProduct() {
         description: z.string(),
         category: z.string(),
         unit: z.string().optional(),
-        gst: z.string().optional(),
+        cgst: z.number().optional(),
+        igst: z.number().optional(),
+        sgst: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -21,7 +24,9 @@ export function createProduct() {
             title: input.title,
             description: input.description,
             unitRelation: { connect: { id: input.unit } },
-            gst: input.gst ?? "",
+            cgst: input.cgst ?? 0,
+            sgst: input.sgst ?? 0,
+            igst: input.igst ?? 0,
             categoryRelation: { connect: { id: input.category } },
           },
         });
@@ -30,6 +35,18 @@ export function createProduct() {
         console.error(err);
         return null;
       }
+    });
+}
+
+export function createUnit() {
+  return publicProcedure
+    .input(z.object({ unit: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.unit.create({
+        data: {
+          unit: input.unit,
+        },
+      });
     });
 }
 
@@ -49,16 +66,51 @@ export function createProductPrices() {
     });
 }
 
+export function deleteProduct() {
+  return publicProcedure
+    .input(z.object({ productId: z.string(), imageIds: z.array(z.string()) }))
+    .mutation(async ({ input }) => {
+      try {
+        console.log("productId: ", input.productId);
+        console.log("imageIds on server: ", input.imageIds);
+
+        // deleting images from imagekit
+        const imagekit = new ImageKit({
+          urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "",
+          publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "",
+          privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "",
+        });
+        const imagekitPromise = imagekit.bulkDeleteFiles(input.imageIds);
+
+        await prisma.productPrices.deleteMany({
+          where: { product: input.productId },
+        });
+
+        await prisma.product.delete({
+          where: { id: input.productId },
+          include: { images: {}, priceRelation: {} },
+        });
+
+        await imagekitPromise;
+        return { status: 200 };
+      } catch (err) {
+        throw err;
+      }
+    });
+}
+
 export function updateProductWithImageUrl() {
   return publicProcedure
-    .input(z.object({ productId: z.string(), imageUrls: z.array(z.string()) }))
+    .input(z.object({ productId: z.string(), images: z.array(z.any()) }))
     .mutation(async ({ input }) => {
       await prisma.$transaction(
-        input.imageUrls.map((imageUrl) =>
+        input.images.map((image) =>
           prisma.product.update({
             where: { id: input.productId },
             data: {
-              images: { create: { imageUrl } },
+              images: {
+                create: { imageUrl: image.url, imageId: image.fileId },
+              },
             },
           })
         )
