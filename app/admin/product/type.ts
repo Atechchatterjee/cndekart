@@ -5,5 +5,7 @@ export interface ProductFormValues {
   price: string;
   category: string;
   unit: string;
-  gst: string;
+  cgst: string;
+  sgst: string;
+  igst: string;
 }
