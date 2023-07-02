@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { prisma } from "utils/prisma-client";
+import { RiEditBoxFill } from "react-icons/ri";
+import DeleteButton from "./DeleteButton";
 
 async function ProductImage({
   productId,
@@ -58,15 +60,19 @@ export default async function ProductList() {
               </div>
               <div className="flex gap-2">
                 <span className="font-semibold">Price: </span>
-                <span>{product.priceRelation[0].range}: </span>
+                <span>{product.priceRelation[0]?.range}: </span>
                 <span>
                   ₹{product.priceRelation[0].price}/{product.unitRelation?.unit}
                 </span>
               </div>
             </div>
-            <Button variant="primary" className="w-[8rem]" size="sm">
-              Edit Details
-            </Button>
+            <div className="flex gap-3">
+              <Button variant="primary" className="w-[8rem] gap-2" size="sm">
+                <RiEditBoxFill />
+                Edit
+              </Button>
+              <DeleteButton product={product} />
+            </div>
           </div>
         </div>
       ))}
