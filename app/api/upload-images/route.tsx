@@ -11,7 +11,7 @@ async function uploadImageHandler(req: NextRequest) {
   try {
     const formData = await req.formData();
 
-    let uploadedFileNames: string[] = [];
+    let uploadedFileNames: any[] = [];
     for (const pair of formData.entries()) {
       const file = pair[1] as Blob | null;
       console.log(file);
@@ -24,7 +24,7 @@ async function uploadImageHandler(req: NextRequest) {
             fileName: file.name,
           });
           console.log("image kit reponse: ", res);
-          uploadedFileNames.push(res.url);
+          uploadedFileNames.push(res);
         } catch (err) {
           console.log("Upload error.");
           console.error(err);
