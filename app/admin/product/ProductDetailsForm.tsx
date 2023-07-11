@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
-import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
+import { FormProvider, UseFormReturn } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -20,9 +20,9 @@ import {
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { ProductFormValues } from "./type";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { Button } from "@/components/ui/button";
 import CreateUnitAlertDialog from "./CreateUnitAlertDialog";
+import { BeatLoader } from "react-spinners";
+import CreateCategoryAlertDialog from "./CreateCategoryAlertDialog";
 
 export default function ProductDetailsForm({
   form,
@@ -134,6 +134,7 @@ export default function ProductDetailsForm({
                       <FormControl>
                         <Select
                           onOpenChange={() => {
+                            // fetches categories only on first click
                             if (!fetchedCategories) {
                               refetchCategories();
                               setFetchedCategories(true);
@@ -159,7 +160,12 @@ export default function ProductDetailsForm({
                                 </SelectItem>
                               ))
                             ) : (
-                              <LoadingSpinner className="justify-center" />
+                              <div className="flex w-full justify-center p-3">
+                                <BeatLoader
+                                  className="justify-center self-center"
+                                  size={10}
+                                />
+                              </div>
                             )}
                           </SelectContent>
                         </Select>
@@ -168,9 +174,7 @@ export default function ProductDetailsForm({
                     </FormItem>
                   )}
                 />
-                <Button variant="primary" className="self-end">
-                  Create Category
-                </Button>
+                <CreateCategoryAlertDialog />
               </div>
               <div className="flex gap-3">
                 <FormField
@@ -182,6 +186,7 @@ export default function ProductDetailsForm({
                       <FormControl>
                         <Select
                           onOpenChange={() => {
+                            // fetches units only on first click
                             if (!fetchedUnits) {
                               refetchUnits();
                               setFetchedUnits(true);
@@ -207,7 +212,12 @@ export default function ProductDetailsForm({
                                 </SelectItem>
                               ))
                             ) : (
-                              <LoadingSpinner className="justify-center" />
+                              <div className="flex w-full justify-center p-3">
+                                <BeatLoader
+                                  className="justify-center self-center"
+                                  size={10}
+                                />
+                              </div>
                             )}
                           </SelectContent>
                         </Select>
@@ -216,7 +226,11 @@ export default function ProductDetailsForm({
                     </FormItem>
                   )}
                 />
-                <CreateUnitAlertDialog createCb={() => refetchUnits()} />
+                <CreateUnitAlertDialog
+                  refetch={refetchUnits}
+                  units={allUnits || []}
+                  isLoading={isLoadingUnits}
+                />
               </div>
               <div className="flex gap-3 w-full">
                 <FormField
