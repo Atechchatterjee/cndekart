@@ -9,3 +9,9 @@ export interface ProductFormValues {
   sgst: string;
   igst: string;
 }
+
+export interface ICategory {
+  id: string;
+  category: string;
+  parentCategory: string;
+}
