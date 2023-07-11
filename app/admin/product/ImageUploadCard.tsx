@@ -5,22 +5,60 @@ import { useCallback } from "react";
 import Dropzone from "react-dropzone";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
+import { AiFillShop } from "react-icons/ai";
+import { BsCloudUploadFill } from "react-icons/bs";
+import { cn } from "@/lib/utils";
+import { IoMdClose } from "react-icons/io";
 
-function ImagePreview({ images }: { images: any[] }) {
+function ImagePreview({
+  images,
+  setImagesToUpload,
+}: {
+  images: any[];
+  setImagesToUpload: Function;
+}) {
   return (
-    <>
-      {images.map((image, i) => (
-        <div className="flex gap-3" key={i}>
-          <Image
-            src={URL.createObjectURL(image)}
-            width={100}
-            height={100}
-            alt=""
-          />
-          <p>{image.name}</p>
-        </div>
-      ))}
-    </>
+    <div className="p-10 relative flex gap-5 border border-slate-200 rounded w-full h-[10rem]">
+      {images.length === 0 ? (
+        <p className="m-auto text-slate-500">No images uploaded yet</p>
+      ) : (
+        images.map((image, i) => (
+          <div className="flex gap-3" key={i}>
+            <div className="flex flex-col gap-2">
+              <Image
+                src={URL.createObjectURL(image)}
+                width={100}
+                height={100}
+                alt=""
+              />
+              <p>{image.name}</p>
+            </div>
+            <IoMdClose
+              className="self-start ml-auto cursor-pointer"
+              onClick={() => {
+                const newImages = images.filter((img) => {
+                  console.log({
+                    imgname: img.name,
+                    imglastModified: img.lastModified,
+                  });
+                  console.log({
+                    imagename: image.name,
+                    imagelastModified: image.lastModified,
+                  });
+                  if (
+                    img.name !== image.name &&
+                    img.lastModified !== image.lastModified
+                  )
+                    return image;
+                });
+                console.log(newImages);
+                setImagesToUpload(newImages);
+              }}
+            />
+          </div>
+        ))
+      )}
+    </div>
   );
 }
 
@@ -48,23 +86,29 @@ export default function ImageUploadCard({
           {({ isDragActive, getRootProps, getInputProps }) => (
             <div
               {...getRootProps({
-                className:
-                  "flex w-full border border-dashed h-[20rem] border-slate-200 rounded-lg mt-5 cursor-pointer justify-center",
+                className: cn(
+                  "flex w-full border border-dashed h-[20rem]",
+                  isDragActive ? "border-primary" : "border-slate-200",
+                  " rounded-lg mt-5 cursor-pointer justify-center"
+                ),
               })}
             >
               <input {...getInputProps()} />
-              <div className="self-center">
-                {images && images.length > 0 ? (
-                  <ImagePreview images={images} />
-                ) : isDragActive ? (
-                  <p>Drop your images here</p>
+              <div className="flex flex-col gap-5 self-center items-center">
+                <BsCloudUploadFill
+                  size="1.5rem"
+                  className={isDragActive ? "text-primary" : "slate-800"}
+                />
+                {isDragActive ? (
+                  <p className="text-primary">Drop your images here</p>
                 ) : (
-                  <p>Drag n Drop images or click to upload</p>
+                  <p className="slate-800">Upload your product images</p>
                 )}
               </div>
             </div>
           )}
         </Dropzone>
+        <ImagePreview images={images} setImagesToUpload={setImagesToUpload} />
         <Button
           variant="primary"
           className="w-full gap-3"
@@ -77,7 +121,10 @@ export default function ImageUploadCard({
           {isLoading === true ? (
             <LoadingSpinner />
           ) : (
-            <span>Create Product</span>
+            <>
+              <AiFillShop size="1.2rem" />
+              <span>Create Product</span>
+            </>
           )}
         </Button>
       </CardContent>
