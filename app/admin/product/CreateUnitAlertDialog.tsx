@@ -73,8 +73,11 @@ export default function CreateUnitAlertDialog({
             {isLoading ? (
               <LoadingSpinner className="justify-center self-center" />
             ) : (
-              units?.map((unit) => (
-                <div className="flex flex-1 border border-slate-200 rounded-lg p-3 text-sm">
+              units?.map((unit, i) => (
+                <div
+                  className="flex flex-1 border border-slate-200 rounded-lg p-3 text-sm"
+                  key={i}
+                >
                   {unit.unit}
                   <IoMdClose
                     className={cn(
