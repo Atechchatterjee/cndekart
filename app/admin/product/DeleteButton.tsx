@@ -5,11 +5,13 @@ import { HiTrash } from "react-icons/hi";
 import { useState } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function DeleteButton({ product }: { product: any }) {
   const [loading, setLoading] = useState<boolean>(false);
   const deleteProductMutation = trpc.deleteProduct.useMutation();
   const router = useRouter();
+  const { toast } = useToast();
 
   async function deleteProduct() {
     setLoading(true);
@@ -23,6 +25,11 @@ export default function DeleteButton({ product }: { product: any }) {
       {
         onSuccess: () => {
           setLoading(false);
+          toast({
+            title: "Product has been deleted",
+            description: `Product with title ${product.title} has been deleted`,
+            variant: "success",
+          });
           router.refresh();
         },
         onError: () => {
@@ -33,7 +40,7 @@ export default function DeleteButton({ product }: { product: any }) {
   }
   return (
     <Button
-      variant="destructive"
+      variant="destructive-outline"
       className="w-[8rem] gap-2"
       size="sm"
       disabled={loading}
