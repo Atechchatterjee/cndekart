@@ -67,7 +67,7 @@ export function fetchSubCategories() {
       } else {
         console.log("fetching non-rooting elements");
         const res = await prisma.category.findMany({
-          where: { parentCategory: { some: { id: input.categoryId } } },
+          where: { parentCategory: { id: input.categoryId } },
           include: { childCategory: true, parentCategory: true },
         });
         console.log(res);
