@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProductDetailsForm from "./ProductDetailsForm";
 import ImageUploadCard from "./ImageUploadCard";
 import { useQuery } from "@tanstack/react-query";
@@ -10,7 +10,11 @@ import { ProductFormValues } from "./type";
 import { Product } from "@prisma/client";
 import { useToast } from "@/components/ui/use-toast";
 
-export default function CreateProduct() {
+export default function CreateProduct({
+  refetchProductLists,
+}: {
+  refetchProductLists?: Function;
+}) {
   const [imagesToUpload, setImagesToUpload] = useState<any[]>([]);
   const [createProductTrigger, setCreateProductTrigger] =
     useState<boolean>(false);
@@ -53,8 +57,9 @@ export default function CreateProduct() {
       images: uploadedFileNames,
       productId: product.id || "",
     });
-    form.reset();
+    // form.reset();
     setImagesToUpload([]);
+    if (refetchProductLists) refetchProductLists();
     return res;
   }
 
@@ -100,6 +105,7 @@ export default function CreateProduct() {
               toast({
                 title: "Product Created Successfully",
                 description: `The product with title: ${productFormValues.title} has been created successfully`,
+                variant: "success",
               });
             }
             setProductFormLoading(false);
