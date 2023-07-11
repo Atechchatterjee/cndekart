@@ -38,6 +38,70 @@ export function createProduct() {
     });
 }
 
+export function fetchProducts() {
+  return publicProcedure.input(z.object({})).query(
+    async () =>
+      await prisma.product.findMany({
+        include: {
+          images: {},
+          unitRelation: {},
+          priceRelation: {},
+          categoryRelation: {},
+        },
+      })
+  );
+}
+
+export function fetchSubCategories() {
+  return publicProcedure
+    .input(z.object({ categoryId: z.string() }))
+    .query(async ({ input }) => {
+      if (input.categoryId === "root" || input.categoryId === "") {
+        return await prisma.category.findMany({
+          where: { root: true },
+          include: {
+            childCategory: true,
+            parentCategory: true,
+          },
+        });
+      } else {
+        console.log("fetching non-rooting elements");
+        const res = await prisma.category.findMany({
+          where: { parentCategory: { some: { id: input.categoryId } } },
+          include: { childCategory: true, parentCategory: true },
+        });
+        console.log(res);
+        return res;
+      }
+    });
+}
+
+export function createSubCategories() {
+  return publicProcedure
+    .input(
+      z.object({
+        parentCategoryId: z.string(),
+        currentCategoryName: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      if (input.parentCategoryId === "root" || input.parentCategoryId === "") {
+        return await prisma.category.create({
+          data: {
+            category: input.currentCategoryName,
+          },
+        });
+      } else {
+        return await prisma.category.create({
+          data: {
+            category: input.currentCategoryName,
+            parentCategory: { connect: { id: input.parentCategoryId } },
+          },
+        });
+      }
+    });
+}
+
 export function createUnit() {
   return publicProcedure
     .input(z.object({ unit: z.string() }))
@@ -46,6 +110,16 @@ export function createUnit() {
         data: {
           unit: input.unit,
         },
+      });
+    });
+}
+
+export function deleteUnit() {
+  return publicProcedure
+    .input(z.object({ unitId: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.unit.delete({
+        where: { id: input.unitId },
       });
     });
 }
@@ -127,5 +201,8 @@ export function fetchUnits() {
 export function fetchCategories() {
   return publicProcedure
     .input(z.object({}))
-    .query(async () => await prisma.category.findMany());
+    .query(
+      async () =>
+        await prisma.category.findMany({ include: { parentCategory: true } })
+    );
 }
