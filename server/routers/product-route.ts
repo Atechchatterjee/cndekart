@@ -76,6 +76,18 @@ export function fetchSubCategories() {
     });
 }
 
+export function deleteSubCategories() {
+  return publicProcedure
+    .input(
+      z.object({
+        categoryId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return prisma.category.delete({ where: { id: input.categoryId } });
+    });
+}
+
 export function createSubCategories() {
   return publicProcedure
     .input(

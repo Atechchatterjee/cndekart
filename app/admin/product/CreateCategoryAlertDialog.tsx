@@ -24,6 +24,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { MdCategory } from "react-icons/md";
 import autoAnimate from "@formkit/auto-animate";
 import { CategoryTree, Node, ROOT } from "./CategoryTree";
+import { IoMdClose } from "react-icons/io";
 
 export default function CreateCategoryAlertDialog() {
   const form = useForm<{ category: string }>({
@@ -40,6 +41,7 @@ export default function CreateCategoryAlertDialog() {
   const [categoryStack, setCategoryStack] = useState<Node[]>();
   const [createCategoryLoading, setCreateCategoryLoading] =
     useState<boolean>(false);
+  const deleteSubCategoryMutation = trpc.deleteSubCategories.useMutation();
 
   function createCategoryTree() {
     const categoryTree = new CategoryTree();
@@ -53,7 +55,8 @@ export default function CreateCategoryAlertDialog() {
   }
 
   function peekCategoryStack() {
-    if (categoryStack) return categoryStack[categoryStack.length - 1];
+    if (categoryStack && categoryStack.length !== 0)
+      return categoryStack[categoryStack.length - 1];
     else return new Node(ROOT);
   }
 
@@ -62,6 +65,7 @@ export default function CreateCategoryAlertDialog() {
     setCategoryTree(categoryTree);
     setCategoryStack([categoryTree.root]);
   }, [categories]);
+  const [categoryToDelete, setCategoryToDelete] = useState<string>("");
 
   useEffect(() => {
     if (animationParent.current) autoAnimate(animationParent.current);
@@ -99,15 +103,47 @@ export default function CreateCategoryAlertDialog() {
               <div className="text-slate-500 text-sm">No Sub Categories</div>
             )}
             {peekCategoryStack().children?.map((category, i) => (
-              <div
-                className="flex flex-1 border border-slate-200 rounded-lg p-3 text-sm hover:text-primary hover:border-primary hover:font-medium transition-colors duration-200"
-                key={i}
-                onClick={() => {
-                  if (categoryStack)
-                    setCategoryStack([...categoryStack, category]);
-                }}
-              >
-                {category.category.category}
+              <div className="flex items-center gap-2" key={i}>
+                <div
+                  className="flex-1 border border-slate-200 rounded-lg p-3 text-sm hover:text-primary hover:border-primary hover:font-medium transition-colors duration-200"
+                  onClick={() => {
+                    if (categoryStack)
+                      setCategoryStack([...categoryStack, category]);
+                  }}
+                >
+                  {category.category.category}
+                </div>
+                <Button
+                  variant="destructive-outline"
+                  size="sm"
+                  disabled={category.children.length > 0}
+                  className="ml-auto"
+                  onClick={() => {
+                    setCategoryToDelete(category.category.id);
+                    deleteSubCategoryMutation.mutate(
+                      {
+                        categoryId: category.category.id,
+                      },
+                      {
+                        onSuccess: () => {
+                          setCategoryStack((currentCategoryStack) =>
+                            currentCategoryStack?.slice(0, -1)
+                          );
+                          const parent = peekCategoryStack();
+                          categoryTree?.remove(category, parent.category.id);
+                          setCategoryToDelete("");
+                        },
+                      }
+                    );
+                  }}
+                >
+                  {categoryToDelete === category.category.id &&
+                  deleteSubCategoryMutation.isLoading ? (
+                    <LoadingSpinner className="m-auto" />
+                  ) : (
+                    <IoMdClose className="cursor-pointer" />
+                  )}
+                </Button>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import {
   createSubCategories,
   createUnit,
   deleteProduct,
+  deleteSubCategories,
   deleteUnit,
   fetchCategories,
   fetchProducts,
@@ -32,6 +33,7 @@ export const appRouter = t.router({
   fetchProducts: fetchProducts(),
   fetchSubCategories: fetchSubCategories(),
   createSubCategories: createSubCategories(),
+  deleteSubCategories: deleteSubCategories(),
 });
 
 export type AppRouter = typeof appRouter;
