@@ -17,7 +17,7 @@ function Cards({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 p-6 pl-8 pr-8 rounded-lg bg-white shadow-2xl shadow-primary w-[30rem] h-[30rem]",
+        "flex flex-col gap-6 p-6 pl-8 pr-8 rounded-lg bg-white shadow-2xl shadow-primary w-[33rem] h-[30rem]",
         "hover:shadow-3xl hover:shadow-blue-900 transition-shadow duration-300",
         className
       )}
@@ -41,55 +41,58 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <div className="rounded-full bg-primary opacity-[10%] blur-[3em] w-[40rem] h-[40rem] absolute left-0 right-0 ml-auto mr-auto z-[-1] mt-[6rem]" />
-      <div className="flex flex-col w-[80em] gap-10 self-center">
+      <div className="flex flex-col w-[100em] gap-10 self-center">
         <Navbar padding={false} className="w-[100%]" />
-        <div className="flex flex-col gap-20">
-          <div className="flex flex-col w-full gap-2">
-            <h1
-              className={`${sora.className} text-[4rem] w-[70rem] self-center text-center font-bold mt-[5rem]`}
-            >
-              Your <span className="text-primary"> Customized E-commerce</span>{" "}
-              Destination for Steel and Fabrication Solutions
-            </h1>
-            <p className="text-slate-700 self-center text-center text-lg font-medium">
-              Experience Seamless Shopping for Steel and Fabrication Solutions
-              at CND E-kart.
-            </p>
-          </div>
-          <div className="flex w-full justify-center">
-            <div className="w-[25em] flex gap-3">
-              <Button
-                variant="primary"
-                size="xl"
-                className="gap-3 w-[10em] flex-1"
+        <div className="flex gap-5">
+          <div className="flex flex-col gap-20 w-1/2">
+            <div className="flex flex-col w-full gap-2">
+              <h1
+                className={`${sora.className} text-[3rem] w-full font-bold mt-[5rem]`}
               >
-                <Image
-                  width={15}
-                  height={15}
-                  alt="explore-icon"
-                  src="explore-icon.svg"
-                />
-                Explore
-              </Button>
-              <Button
-                variant="outline"
-                size="xl"
-                className="gap-3 w-[10em] flex-1 font-medium"
-              >
-                Get to know us
-                <BsArrowRight size="1rem" strokeWidth="0.5" />
-              </Button>
+                Your{" "}
+                <span className="text-primary"> Customized E-commerce</span>{" "}
+                Destination for Steel and Fabrication Solutions
+              </h1>
+              <p className="text-slate-700 text-lg font-medium">
+                Experience Seamless Shopping for Steel and Fabrication Solutions
+                at CND E-kart.
+              </p>
+            </div>
+            <div className="flex w-full">
+              <div className="w-[25em] flex gap-3">
+                <Button
+                  variant="primary"
+                  size="xl"
+                  className="gap-3 w-[10em] flex-1"
+                >
+                  <Image
+                    width={15}
+                    height={15}
+                    alt="explore-icon"
+                    src="explore-icon.svg"
+                  />
+                  Explore
+                </Button>
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="gap-3 w-[10em] flex-1 font-medium"
+                >
+                  Get to know us
+                  <BsArrowRight size="1rem" strokeWidth="0.5" />
+                </Button>
+              </div>
             </div>
           </div>
+          <img
+            src="https://ik.imagekit.io/hbqsxmwrz/home-illus.svg?updatedAt=1689183625654"
+            className="flex-1"
+            width={1200}
+            height={1000}
+            alt="home-illus"
+          />
         </div>
       </div>
-      <Image
-        width={1500}
-        height={1000}
-        src="intersect.svg"
-        alt="intersect"
-        className="absolute z-[-1] ml-auto mr-auto left-0 right-0 mt-[47em]"
-      />
       <div className="flex w-[100%] bg-primary h-[32.7rem] mt-[14rem]">
         <div className="flex flex-wrap gap-5 mt-[-4rem] left-0 right-0 ml-auto mr-auto">
           <Cards
