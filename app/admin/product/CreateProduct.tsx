@@ -8,8 +8,13 @@ import { trpc } from "@/utils/trpc";
 import { useForm } from "react-hook-form";
 import { ProductFormValues } from "./type";
 import { Product } from "@prisma/client";
+import { useToast } from "@/components/ui/use-toast";
 
-export default function CreateProduct() {
+export default function CreateProduct({
+  refetchProductLists,
+}: {
+  refetchProductLists?: Function;
+}) {
   const [imagesToUpload, setImagesToUpload] = useState<any[]>([]);
   const [createProductTrigger, setCreateProductTrigger] =
     useState<boolean>(false);
@@ -22,7 +27,9 @@ export default function CreateProduct() {
       category: "",
       unit: "",
       range: "",
-      gst: "",
+      igst: "",
+      cgst: "",
+      sgst: "",
     },
   });
 
@@ -32,8 +39,9 @@ export default function CreateProduct() {
     trpc.updateProductWithImageUrl.useMutation();
   const [productFormLoading, setProductFormLoading] = useState<boolean>(false);
 
+  const { toast } = useToast();
+
   async function createProductImages(product: Product) {
-    // alert("uploading images");
     const formData = new FormData();
     imagesToUpload.forEach((imageToUpload, i) =>
       formData.append(`image-${i}`, imageToUpload as any)
@@ -46,16 +54,17 @@ export default function CreateProduct() {
     const uploadedFileNames = res.data.fileNames;
     // using the uploaded image urls to associate to the product
     updateProductImageMutation.mutate({
-      imageUrls: uploadedFileNames,
+      images: uploadedFileNames,
       productId: product.id || "",
     });
-    form.reset();
+    // form.reset();
+    setImagesToUpload([]);
+    if (refetchProductLists) refetchProductLists();
     return res;
   }
 
   function createProductPrice(res: Product) {
     const productFormValues = form.getValues();
-    // alert("creating a price");
     productPricesMutation.mutate({
       range: productFormValues.range,
       price: productFormValues.price,
@@ -69,20 +78,35 @@ export default function CreateProduct() {
     queryFn: async function createProduct() {
       setProductFormLoading(true);
       const productFormValues = form.getValues();
-      // alert(JSON.stringify({ values: productFormValues }));
       const res = productMutation.mutate(
         {
           title: productFormValues?.title ?? "",
           description: productFormValues?.description ?? "",
           category: productFormValues?.category ?? "",
           unit: productFormValues?.unit ?? "",
-          gst: productFormValues?.gst ?? "",
+          sgst:
+            productFormValues?.sgst === ""
+              ? 0
+              : parseInt(productFormValues?.sgst),
+          cgst:
+            productFormValues?.cgst === ""
+              ? 0
+              : parseInt(productFormValues?.cgst),
+          igst:
+            productFormValues?.igst === ""
+              ? 0
+              : parseInt(productFormValues?.igst),
         },
         {
-          onSuccess: (res) => {
+          onSuccess: async (res) => {
             if (res) {
               createProductPrice(res);
-              createProductImages(res);
+              await createProductImages(res);
+              toast({
+                title: "Product Created Successfully",
+                description: `The product with title: ${productFormValues.title} has been created successfully`,
+                variant: "success",
+              });
             }
             setProductFormLoading(false);
           },
@@ -106,7 +130,9 @@ export default function CreateProduct() {
           ]);
         }}
         isLoading={productFormLoading}
-        onCreate={() => setCreateProductTrigger(true)}
+        onCreate={async () => {
+          setCreateProductTrigger(true);
+        }}
       />
     </div>
   );

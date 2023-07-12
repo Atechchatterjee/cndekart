@@ -20,22 +20,34 @@ import {
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { ProductFormValues } from "./type";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import CreateUnitAlertDialog from "./CreateUnitAlertDialog";
+import { BeatLoader } from "react-spinners";
+import CreateCategoryAlertDialog from "./CreateCategoryAlertDialog";
 
 export default function ProductDetailsForm({
   form,
 }: {
   form: UseFormReturn<ProductFormValues>;
 }) {
-  const [triggerFetchUnits, setTriggerFetchUnits] = useState<boolean>(false);
-  const [triggerFetchCategories, setTriggerFetchCategories] =
-    useState<boolean>(false);
+  const [fetchedUnits, setFetchedUnits] = useState<boolean>(false);
+  const [fetchedCategories, setFetchedCategories] = useState<boolean>(false);
 
-  const { data: allUnits, isLoading: isLoadingUnits } =
-    trpc.fetchUnits.useQuery({}, { enabled: triggerFetchUnits });
+  const {
+    data: allUnits,
+    isLoading: isLoadingUnits,
+    refetch: refetchUnits,
+  } = trpc.fetchUnits.useQuery(
+    {},
+    {
+      enabled: false,
+    }
+  );
 
-  const { data: allCategories, isLoading: isLoadingCategories } =
-    trpc.fetchCategories.useQuery({}, { enabled: triggerFetchCategories });
+  const {
+    data: allCategories,
+    isLoading: isLoadingCategories,
+    refetch: refetchCategories,
+  } = trpc.fetchCategories.useQuery({}, { enabled: false });
 
   return (
     <Card className="flex-1">
@@ -112,92 +124,167 @@ export default function ProductDetailsForm({
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categories</FormLabel>
-                    <FormControl>
-                      <Select
-                        onOpenChange={() => setTriggerFetchCategories(true)}
-                        onValueChange={(value) =>
-                          field.onChange({
-                            target: { name: field.name, value: value },
-                          })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue
-                            placeholder="Product Category"
-                            {...field}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {!isLoadingCategories ? (
-                            allCategories?.map((category, i) => (
-                              <SelectItem value={category.id} key={i}>
-                                {category.category}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <LoadingSpinner className="justify-center" />
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="unit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Unit</FormLabel>
-                    <FormControl>
-                      <Select
-                        onOpenChange={() => setTriggerFetchUnits(true)}
-                        onValueChange={(value) =>
-                          field.onChange({
-                            target: { name: field.name, value: value },
-                          })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Product Unit" {...field} />
-                        </SelectTrigger>
-                        <SelectContent className="flex flex-col">
-                          {!isLoadingUnits ? (
-                            allUnits?.map((unit, i) => (
-                              <SelectItem value={unit.id} key={i}>
-                                {unit.unit}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <LoadingSpinner className="justify-center" />
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gst"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GST</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Product GST" type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-3">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Categories</FormLabel>
+                      <FormControl>
+                        <Select
+                          onOpenChange={() => {
+                            // fetches categories only on first click
+                            if (!fetchedCategories) {
+                              refetchCategories();
+                              setFetchedCategories(true);
+                            }
+                          }}
+                          onValueChange={(value) =>
+                            field.onChange({
+                              target: { name: field.name, value: value },
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder="Product Category"
+                              {...field}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {!isLoadingCategories ? (
+                              allCategories?.map((category, i) => (
+                                <SelectItem value={category.id} key={i}>
+                                  {category.category}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="flex w-full justify-center p-3">
+                                <BeatLoader
+                                  className="justify-center self-center"
+                                  size={10}
+                                />
+                              </div>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <CreateCategoryAlertDialog />
+              </div>
+              <div className="flex gap-3">
+                <FormField
+                  control={form.control}
+                  name="unit"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Unit</FormLabel>
+                      <FormControl>
+                        <Select
+                          onOpenChange={() => {
+                            // fetches units only on first click
+                            if (!fetchedUnits) {
+                              refetchUnits();
+                              setFetchedUnits(true);
+                            }
+                          }}
+                          onValueChange={(value) =>
+                            field.onChange({
+                              target: { name: field.name, value: value },
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder="Product Unit"
+                              {...field}
+                            />
+                          </SelectTrigger>
+                          <SelectContent className="flex flex-col">
+                            {!isLoadingUnits ? (
+                              allUnits?.map((unit, i) => (
+                                <SelectItem value={unit.id} key={i}>
+                                  {unit.unit}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="flex w-full justify-center p-3">
+                                <BeatLoader
+                                  className="justify-center self-center"
+                                  size={10}
+                                />
+                              </div>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <CreateUnitAlertDialog
+                  refetch={refetchUnits}
+                  units={allUnits || []}
+                  isLoading={isLoadingUnits}
+                />
+              </div>
+              <div className="flex gap-3 w-full">
+                <FormField
+                  control={form.control}
+                  name="sgst"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>SGST</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Product SGST"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cgst"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>CGST</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Product CGST"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="igst"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>IGST</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Product IGST"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </form>
         </FormProvider>

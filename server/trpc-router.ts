@@ -4,7 +4,14 @@ import { registerUser } from "./routers/user-route";
 import {
   createProduct,
   createProductPrices,
+  createSubCategories,
+  createUnit,
+  deleteProduct,
+  deleteSubCategories,
+  deleteUnit,
   fetchCategories,
+  fetchProducts,
+  fetchSubCategories,
   fetchUnits,
   updateProductWithImageUrl,
 } from "./routers/product-route";
@@ -20,6 +27,13 @@ export const appRouter = t.router({
   fetchCategories: fetchCategories(),
   createProductPrices: createProductPrices(),
   updateProductWithImageUrl: updateProductWithImageUrl(),
+  deleteProduct: deleteProduct(),
+  createUnit: createUnit(),
+  deleteUnit: deleteUnit(),
+  fetchProducts: fetchProducts(),
+  fetchSubCategories: fetchSubCategories(),
+  createSubCategories: createSubCategories(),
+  deleteSubCategories: deleteSubCategories(),
 });
 
 export type AppRouter = typeof appRouter;

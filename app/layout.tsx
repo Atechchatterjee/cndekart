@@ -4,6 +4,7 @@ import { ClientProvider } from "@/utils/trpc-provider";
 import Provider from "@/utils/provider";
 import { NextAuthSessionProvider } from "@/utils/SessionProvider";
 import DnDProvider from "@/utils/DndProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default async function RootLayout({
             <DnDProvider>
               <Provider>
                 <main>{children}</main>
+                <Toaster />
               </Provider>
             </DnDProvider>
           </ClientProvider>
