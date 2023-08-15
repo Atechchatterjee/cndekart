@@ -150,7 +150,6 @@ export default function ProductEdit({
               Product Id: #{params.productId}
             </p>
           </div>
-          <pre>{JSON.stringify({ imagesToUpload }, null, 2)}</pre>
           <FetchOnMountContext.Provider
             value={{ fetchCategoriesOnMount: true, fetchUnitsOnMount: true }}
           >
