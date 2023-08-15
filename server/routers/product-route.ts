@@ -52,6 +52,52 @@ export function fetchProducts() {
   );
 }
 
+export function updateProduct() {
+  return publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().optional(),
+        price: z
+          .object({ id: z.string(), range: z.string(), price: z.string() })
+          .optional(),
+        description: z.string().optional(),
+        category: z.string().optional(),
+        unit: z.string().optional(),
+        cgst: z.number().optional(),
+        igst: z.number().optional(),
+        sgst: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { price, ...productFields } = input;
+      await prisma.product.update({
+        where: { id: input.id },
+        data: { ...productFields },
+      });
+      if (price)
+        await prisma.productPrices.update({
+          where: { id: price.id },
+          data: { range: price.range, price: parseInt(price.price) },
+        });
+    });
+}
+
+export function fetchProduct() {
+  return publicProcedure.input(z.object({ productId: z.string() })).query(
+    async ({ input }) =>
+      await prisma.product.findUnique({
+        where: { id: input.productId },
+        include: {
+          images: {},
+          unitRelation: {},
+          priceRelation: {},
+          categoryRelation: {},
+        },
+      })
+  );
+}
+
 export function fetchSubCategories() {
   return publicProcedure
     .input(z.object({ categoryId: z.string() }))

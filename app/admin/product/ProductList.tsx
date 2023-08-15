@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { RiEditBoxFill } from "react-icons/ri";
 import DeleteButton from "./DeleteButton";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 function ProductImage({
   productImages,
@@ -31,6 +32,7 @@ export default function ProductList({
   productLists: any[] | undefined;
   isLoading: boolean;
 }) {
+  const router = useRouter();
   return (
     <div className="flex flex-col gap-3 mt-10">
       <div className="flex flex-col gap-2">
@@ -67,7 +69,14 @@ export default function ProductList({
                 </div>
               </div>
               <div className="flex gap-3">
-                <Button variant="primary" className="w-[8rem] gap-2" size="sm">
+                <Button
+                  variant="primary"
+                  className="w-[8rem] gap-2"
+                  size="sm"
+                  onClick={() => {
+                    router.push(`/admin/product/${product.id}`);
+                  }}
+                >
                   <RiEditBoxFill />
                   Edit
                 </Button>

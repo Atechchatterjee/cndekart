@@ -17,20 +17,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/utils/trpc";
 import { ProductFormValues } from "./type";
 import CreateUnitAlertDialog from "./CreateUnitAlertDialog";
 import { BeatLoader } from "react-spinners";
 import CreateCategoryAlertDialog from "./CreateCategoryAlertDialog";
+import { useContext } from "react";
+import { FetchOnMountContext } from "./[productId]/FetchOnMountContext";
 
 export default function ProductDetailsForm({
   form,
+  providedCategories,
+  providedUnits,
 }: {
   form: UseFormReturn<ProductFormValues>;
+  providedCategories?: any[];
+  providedUnits?: any[];
 }) {
   const [fetchedUnits, setFetchedUnits] = useState<boolean>(false);
   const [fetchedCategories, setFetchedCategories] = useState<boolean>(false);
+  const { fetchCategoriesOnMount, fetchUnitsOnMount } =
+    useContext(FetchOnMountContext);
 
   const {
     data: allUnits,
@@ -39,7 +47,7 @@ export default function ProductDetailsForm({
   } = trpc.fetchUnits.useQuery(
     {},
     {
-      enabled: false,
+      enabled: !!fetchUnitsOnMount && !providedUnits,
     }
   );
 
@@ -47,7 +55,14 @@ export default function ProductDetailsForm({
     data: allCategories,
     isLoading: isLoadingCategories,
     refetch: refetchCategories,
-  } = trpc.fetchCategories.useQuery({}, { enabled: false });
+  } = trpc.fetchCategories.useQuery(
+    {},
+    { enabled: !!fetchCategoriesOnMount && !providedCategories }
+  );
+
+  useEffect(() => {
+    console.log({ allCategories });
+  }, [allCategories]);
 
   return (
     <Card className="flex-1">
@@ -133,6 +148,7 @@ export default function ProductDetailsForm({
                       <FormLabel>Categories</FormLabel>
                       <FormControl>
                         <Select
+                          value={!field.value ? "default" : field.value}
                           onOpenChange={() => {
                             // fetches categories only on first click
                             if (!fetchedCategories) {
@@ -148,25 +164,70 @@ export default function ProductDetailsForm({
                         >
                           <SelectTrigger>
                             <SelectValue
+                              aria-label="category"
                               placeholder="Product Category"
                               {...field}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            {!isLoadingCategories ? (
-                              allCategories?.map((category, i) => (
-                                <SelectItem value={category.id} key={i}>
+                            {providedCategories &&
+                              [
+                                ...(providedCategories as any),
+                                {
+                                  id: "default",
+                                  category: "Product Categories",
+                                },
+                              ].map((category, i) => (
+                                <SelectItem
+                                  value={category.id}
+                                  key={i}
+                                  className={
+                                    category.id === "default"
+                                      ? "hidden"
+                                      : "block"
+                                  }
+                                >
                                   {category.category}
                                 </SelectItem>
-                              ))
-                            ) : (
-                              <div className="flex w-full justify-center p-3">
-                                <BeatLoader
-                                  className="justify-center self-center"
-                                  size={10}
-                                />
-                              </div>
-                            )}
+                              ))}
+                            {allCategories &&
+                            !isLoadingCategories &&
+                            !providedCategories
+                              ? [
+                                  ...(allCategories as any),
+                                  {
+                                    id: "default",
+                                    category: "Product Category",
+                                  },
+                                ]?.map((category, i) => (
+                                  <SelectItem
+                                    value={category.id}
+                                    key={i}
+                                    className={
+                                      category.id === "default"
+                                        ? "hidden"
+                                        : "block"
+                                    }
+                                  >
+                                    {category.category}
+                                  </SelectItem>
+                                ))
+                              : !providedCategories && (
+                                  <>
+                                    <SelectItem
+                                      value={"default"}
+                                      className="hidden"
+                                    >
+                                      Product Category
+                                    </SelectItem>
+                                    <div className="flex w-full justify-center p-3">
+                                      <BeatLoader
+                                        className="justify-center self-center"
+                                        size={10}
+                                      />
+                                    </div>
+                                  </>
+                                )}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -185,6 +246,7 @@ export default function ProductDetailsForm({
                       <FormLabel>Unit</FormLabel>
                       <FormControl>
                         <Select
+                          value={!field.value ? "default" : field.value}
                           onOpenChange={() => {
                             // fetches units only on first click
                             if (!fetchedUnits) {
@@ -205,20 +267,52 @@ export default function ProductDetailsForm({
                             />
                           </SelectTrigger>
                           <SelectContent className="flex flex-col">
-                            {!isLoadingUnits ? (
-                              allUnits?.map((unit, i) => (
-                                <SelectItem value={unit.id} key={i}>
+                            {providedUnits &&
+                              [
+                                ...(providedUnits as any),
+                                { id: "default", category: "Product Unit" },
+                              ]?.map((unit, i) => (
+                                <SelectItem
+                                  value={unit.id}
+                                  key={i}
+                                  className={
+                                    unit.id === "default" ? "hidden" : "block"
+                                  }
+                                >
                                   {unit.unit}
                                 </SelectItem>
-                              ))
-                            ) : (
-                              <div className="flex w-full justify-center p-3">
-                                <BeatLoader
-                                  className="justify-center self-center"
-                                  size={10}
-                                />
-                              </div>
-                            )}
+                              ))}
+                            {!isLoadingUnits && !providedCategories
+                              ? [
+                                  ...(allUnits as any),
+                                  { id: "default", category: "Product Unit" },
+                                ]?.map((unit, i) => (
+                                  <SelectItem
+                                    value={unit.id}
+                                    key={i}
+                                    className={
+                                      unit.id === "default" ? "hidden" : "block"
+                                    }
+                                  >
+                                    {unit.unit}
+                                  </SelectItem>
+                                ))
+                              : !providedUnits && (
+                                  <>
+                                    <SelectItem
+                                      value="default"
+                                      className="hidden"
+                                    >
+                                      Product Unit
+                                    </SelectItem>
+                                    <div className="flex w-full justify-center p-3">
+                                      <BeatLoader
+                                        className="justify-center self-center"
+                                        size={10}
+                                      />
+                                    </div>
+                                  </>
+                                )}
                           </SelectContent>
                         </Select>
                       </FormControl>

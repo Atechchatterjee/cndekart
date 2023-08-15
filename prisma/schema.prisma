@@ -98,7 +98,7 @@ model Category {
   id             String     @id @unique @default(cuid())
   category       String     @unique
   parentId       String     @default("")
-  parentCategory Category?   @relation("parent-child", fields: [parentId], onDelete: NoAction, onUpdate: NoAction, references: [id])
+  parentCategory Category?  @relation("parent-child", fields: [parentId], onDelete: NoAction, onUpdate: NoAction, references: [id])
   childCategory  Category[] @relation("parent-child")
   product        Product[]
   root           Boolean    @default(false)

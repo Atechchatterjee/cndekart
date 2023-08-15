@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button";
 import { useCallback } from "react";
 import Dropzone from "react-dropzone";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Image from "next/image";
 import { AiFillShop } from "react-icons/ai";
 import { BsCloudUploadFill } from "react-icons/bs";
 import { cn } from "@/lib/utils";
 import { IoMdClose } from "react-icons/io";
+
+interface ImageUploadCardProps {
+  images: any[];
+  setImagesToUpload: (images: any[]) => void;
+  onUpload?: (images: any[]) => void;
+  onCreate?: () => void;
+  isLoading?: boolean;
+  forUpdate?: boolean;
+}
 
 function ImagePreview({
   images,
@@ -25,7 +33,7 @@ function ImagePreview({
         images.map((image, i) => (
           <div className="flex gap-3" key={i}>
             <div className="flex flex-col gap-2">
-              <Image
+              <img
                 src={URL.createObjectURL(image)}
                 width={100}
                 height={100}
@@ -68,13 +76,8 @@ export default function ImageUploadCard({
   onUpload: uploadCb,
   onCreate,
   isLoading,
-}: {
-  images: any[];
-  setImagesToUpload: (images: any[]) => void;
-  onUpload?: (images: any[]) => void;
-  onCreate?: () => void;
-  isLoading?: boolean;
-}) {
+  forUpdate, // if this component is being used for updating/editing a product
+}: ImageUploadCardProps) {
   const handleDrop = useCallback((files: any) => {
     uploadCb && uploadCb(files);
   }, []);
@@ -123,7 +126,7 @@ export default function ImageUploadCard({
           ) : (
             <>
               <AiFillShop size="1.2rem" />
-              <span>Create Product</span>
+              <span>{forUpdate ? "Update Product" : "Create Product"}</span>
             </>
           )}
         </Button>

@@ -11,9 +11,11 @@ import {
   deleteUnit,
   fetchCategories,
   fetchProducts,
+  fetchProduct,
   fetchSubCategories,
   fetchUnits,
   updateProductWithImageUrl,
+  updateProduct,
 } from "./routers/product-route";
 
 export const t = initTRPC.create({
@@ -23,6 +25,7 @@ export const t = initTRPC.create({
 export const appRouter = t.router({
   registerUser: registerUser(),
   createProduct: createProduct(),
+  updateProduct: updateProduct(),
   fetchUnits: fetchUnits(),
   fetchCategories: fetchCategories(),
   createProductPrices: createProductPrices(),
@@ -31,6 +34,7 @@ export const appRouter = t.router({
   createUnit: createUnit(),
   deleteUnit: deleteUnit(),
   fetchProducts: fetchProducts(),
+  fetchProduct: fetchProduct(),
   fetchSubCategories: fetchSubCategories(),
   createSubCategories: createSubCategories(),
   deleteSubCategories: deleteSubCategories(),
