@@ -25,6 +25,7 @@ export default function CreateProduct({
       description: "",
       price: "",
       category: "",
+      manufacturer: "",
       unit: "",
       range: "",
       igst: "",

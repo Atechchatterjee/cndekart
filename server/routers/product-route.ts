@@ -10,6 +10,7 @@ export function createProduct() {
         title: z.string(),
         description: z.string(),
         category: z.string(),
+        manufacturer: z.string().optional(),
         unit: z.string().optional(),
         cgst: z.number().optional(),
         igst: z.number().optional(),
@@ -28,6 +29,7 @@ export function createProduct() {
             sgst: input.sgst ?? 0,
             igst: input.igst ?? 0,
             categoryRelation: { connect: { id: input.category } },
+            manufacturerRelation: { connect: { id: input.manufacturer } },
           },
         });
         return createdProduct;
@@ -42,6 +44,53 @@ export function fetchProducts() {
   return publicProcedure.input(z.object({})).query(
     async () =>
       await prisma.product.findMany({
+        include: {
+          images: {},
+          unitRelation: {},
+          priceRelation: {},
+          categoryRelation: {},
+        },
+      })
+  );
+}
+
+export function updateProduct() {
+  return publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string().optional(),
+        price: z
+          .object({ id: z.string(), range: z.string(), price: z.string() })
+          .optional(),
+        description: z.string().optional(),
+        category: z.string().optional(),
+        manufacturer: z.string().optional(),
+        unit: z.string().optional(),
+        cgst: z.number().optional(),
+        igst: z.number().optional(),
+        sgst: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { price, ...productFields } = input;
+      await prisma.product.update({
+        where: { id: input.id },
+        data: { ...productFields },
+      });
+      if (price)
+        await prisma.productPrices.update({
+          where: { id: price.id },
+          data: { range: price.range, price: parseInt(price.price) },
+        });
+    });
+}
+
+export function fetchProduct() {
+  return publicProcedure.input(z.object({ productId: z.string() })).query(
+    async ({ input }) =>
+      await prisma.product.findUnique({
+        where: { id: input.productId },
         include: {
           images: {},
           unitRelation: {},
@@ -85,6 +134,28 @@ export function deleteSubCategories() {
     )
     .mutation(async ({ input }) => {
       return prisma.category.delete({ where: { id: input.categoryId } });
+    });
+}
+
+export function fetchAllManufacturer() {
+  return publicProcedure.input(z.object({})).query(async () => {
+    return await prisma.manufacturer.findMany({});
+  });
+}
+
+export function createManufacturer() {
+  return publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ input }) => {
+      return await prisma.manufacturer.create({ data: { name: input.name } });
+    });
+}
+
+export function deleteManufacturer() {
+  return publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      return await prisma.manufacturer.delete({ where: { id: input.id } });
     });
 }
 

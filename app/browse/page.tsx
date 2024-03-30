@@ -29,8 +29,8 @@ export default async function Browse() {
   });
 
   return (
-    <div className="pl-[15rem] pr-[15rem]">
-      <Navbar padding={false} route="browse" />
+    <div className="w-[100rem] m-auto">
+      <Navbar route="browse" padding={false} />
       <div className="flex flex-col gap-3 mt-10">
         <div className="flex flex-col gap-2">
           <div className="flex gap-4 items-center">
