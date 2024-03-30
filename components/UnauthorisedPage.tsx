@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 
 export default function UnauthorisedPage() {
   const router = useRouter();
+
   return (
     <div className="flex flex-col w-full h-[100svh] justify-center gap-10">
       <div className="flex flex-col gap-2 self-center">

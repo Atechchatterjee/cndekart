@@ -52,7 +52,7 @@ export default function AdminLogin() {
     }
   }
   return (
-    <div className="bg-slate-200 h-[100svh] overflow-x-auto">
+    <div className="w-[80%] m-auto h-[100svh] overflow-x-auto">
       <Navbar />
       <Card className="flex flex-col gap-10 pt-3 pl-4 pr-4 mb-[6rem] w-[35rem] bg-white rounded-lg shadow-xl shadow-slate-300 left-0 right-0 top-0 bottom-0 m-auto mt-[6rem]">
         <CardHeader>

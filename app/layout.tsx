@@ -1,12 +1,10 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
 import { ClientProvider } from "@/utils/trpc-provider";
 import Provider from "@/utils/provider";
 import { NextAuthSessionProvider } from "@/utils/SessionProvider";
 import DnDProvider from "@/utils/DndProvider";
 import { Toaster } from "@/components/ui/toaster";
-
-const inter = Inter({ subsets: ["latin"] });
+import { ibm_plex_sans } from "./fonts";
 
 export const metadata = {
   title: "Create Next App",
@@ -20,7 +18,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={ibm_plex_sans.className}>
         <NextAuthSessionProvider>
           <ClientProvider>
             <DnDProvider>

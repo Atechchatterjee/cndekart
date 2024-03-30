@@ -10,6 +10,7 @@ export function createProduct() {
         title: z.string(),
         description: z.string(),
         category: z.string(),
+        manufacturer: z.string().optional(),
         unit: z.string().optional(),
         cgst: z.number().optional(),
         igst: z.number().optional(),
@@ -28,6 +29,7 @@ export function createProduct() {
             sgst: input.sgst ?? 0,
             igst: input.igst ?? 0,
             categoryRelation: { connect: { id: input.category } },
+            manufacturerRelation: { connect: { id: input.manufacturer } },
           },
         });
         return createdProduct;
@@ -63,6 +65,7 @@ export function updateProduct() {
           .optional(),
         description: z.string().optional(),
         category: z.string().optional(),
+        manufacturer: z.string().optional(),
         unit: z.string().optional(),
         cgst: z.number().optional(),
         igst: z.number().optional(),
@@ -131,6 +134,28 @@ export function deleteSubCategories() {
     )
     .mutation(async ({ input }) => {
       return prisma.category.delete({ where: { id: input.categoryId } });
+    });
+}
+
+export function fetchAllManufacturer() {
+  return publicProcedure.input(z.object({})).query(async () => {
+    return await prisma.manufacturer.findMany({});
+  });
+}
+
+export function createManufacturer() {
+  return publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ input }) => {
+      return await prisma.manufacturer.create({ data: { name: input.name } });
+    });
+}
+
+export function deleteManufacturer() {
+  return publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      return await prisma.manufacturer.delete({ where: { id: input.id } });
     });
 }
 

@@ -25,14 +25,17 @@ import { BeatLoader } from "react-spinners";
 import CreateCategoryAlertDialog from "./CreateCategoryAlertDialog";
 import { useContext } from "react";
 import { FetchOnMountContext } from "./[productId]/FetchOnMountContext";
+import CreateManufacturerAlertDialog from "./CreateManufacturerAlertDialog";
 
 export default function ProductDetailsForm({
   form,
   providedCategories,
+  providedManufacturer,
   providedUnits,
 }: {
   form: UseFormReturn<ProductFormValues>;
   providedCategories?: any[];
+  providedManufacturer?: any[];
   providedUnits?: any[];
 }) {
   const [fetchedUnits, setFetchedUnits] = useState<boolean>(false);
@@ -58,6 +61,16 @@ export default function ProductDetailsForm({
   } = trpc.fetchCategories.useQuery(
     {},
     { enabled: !!fetchCategoriesOnMount && !providedCategories }
+  );
+
+  // fetch manufactuer details
+  const {
+    data: allManufacturers,
+    isLoading: isLoadingManufacturers,
+    refetch: refetchManufacturers,
+  } = trpc.fetchAllManufacturer.useQuery(
+    {},
+    { enabled: !providedManufacturer }
   );
 
   useEffect(() => {
@@ -137,6 +150,73 @@ export default function ProductDetailsForm({
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+              </div>
+              <div className="flex gap-3">
+                <FormField
+                  name="manufacturer"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Manufacturer</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={!field.value ? "default" : field.value}
+                          onValueChange={(value) =>
+                            field.onChange({
+                              target: { name: field.name, value: value },
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              aria-label="manufacturer"
+                              placeholder="Product Manufacturer"
+                              {...field}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {!providedManufacturer &&
+                              allManufacturers &&
+                              [
+                                { id: "default", name: "Product Manufacturer" },
+                                ...allManufacturers,
+                              ].map(({ id, name }, i) => (
+                                <SelectItem
+                                  value={id}
+                                  key={i}
+                                  className={
+                                    id === "default" ? "hidden" : "block"
+                                  }
+                                >
+                                  {name}
+                                </SelectItem>
+                              ))}
+                            {providedManufacturer &&
+                              [
+                                { id: "default", name: "Product Manufacturer" },
+                                ...providedManufacturer,
+                              ].map(({ id, name }, i) => (
+                                <SelectItem
+                                  value={id}
+                                  key={i}
+                                  className={
+                                    id === "default" ? "hidden" : "block"
+                                  }
+                                >
+                                  {name}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <CreateManufacturerAlertDialog
+                  manufacturers={allManufacturers || []}
+                  isLoading={isLoadingManufacturers}
+                  refetch={refetchManufacturers}
                 />
               </div>
               <div className="flex gap-3">

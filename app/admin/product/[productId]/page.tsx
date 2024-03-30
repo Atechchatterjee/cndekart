@@ -45,6 +45,7 @@ export default function ProductEdit({
       description: "",
       price: "",
       category: "",
+      manufacturer: "",
       unit: "",
       range: "",
       igst: "",
@@ -66,6 +67,9 @@ export default function ProductEdit({
         });
       });
       form.setValue("category", fetchedProduct.categoryRelation.id, {
+        shouldValidate: true,
+      });
+      form.setValue("manufacturer", fetchedProduct.manufacturer || "", {
         shouldValidate: true,
       });
       form.setValue("unit", fetchedProduct.unitRelation?.id || "", {
@@ -100,7 +104,6 @@ export default function ProductEdit({
     queryKey: [updateProductTrigger],
     queryFn: async function updateProduct() {
       const { price, range, cgst, sgst, igst, ...val } = form.getValues();
-
       if (fetchedProduct) {
         setProductFormLoading(true);
         updateProductMutation.mutate(
@@ -130,6 +133,7 @@ export default function ProductEdit({
   const { data: allUnits } = trpc.fetchUnits.useQuery({});
 
   const { data: allCategories } = trpc.fetchCategories.useQuery({});
+  const { data: allManufacturers } = trpc.fetchAllManufacturer.useQuery({});
 
   if (status === "authenticated")
     return (
@@ -157,6 +161,7 @@ export default function ProductEdit({
               <ProductDetailsForm
                 form={form}
                 providedCategories={allCategories}
+                providedManufacturer={allManufacturers}
                 providedUnits={allUnits}
               />
               <ImageUploadCard

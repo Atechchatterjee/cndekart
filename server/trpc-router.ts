@@ -16,6 +16,9 @@ import {
   fetchUnits,
   updateProductWithImageUrl,
   updateProduct,
+  fetchAllManufacturer,
+  createManufacturer,
+  deleteManufacturer,
 } from "./routers/product-route";
 
 export const t = initTRPC.create({
@@ -38,6 +41,9 @@ export const appRouter = t.router({
   fetchSubCategories: fetchSubCategories(),
   createSubCategories: createSubCategories(),
   deleteSubCategories: deleteSubCategories(),
+  fetchAllManufacturer: fetchAllManufacturer(),
+  createManufacturer: createManufacturer(),
+  deleteManufacturer: deleteManufacturer(),
 });
 
 export type AppRouter = typeof appRouter;

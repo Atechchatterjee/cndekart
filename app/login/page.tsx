@@ -290,7 +290,7 @@ export default function Login() {
 
   return (
     <div className="bg-slate-200 h-[100svh] overflow-x-auto">
-      <Navbar route="login" />
+      <Navbar route="login" className="w-[100rem] m-auto" />
       <div className="flex flex-col gap-10 p-10 pl-14 mt-[6rem] mb-[6rem] w-[40rem] bg-white rounded-lg shadow-xl shadow-slate-300 left-0 right-0 top-0 bottom-0 m-auto">
         <div className="flex flex-col gap-2">
           <h1 className={`${sora.className} text-2xl font-bold`}>

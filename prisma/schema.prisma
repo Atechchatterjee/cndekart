@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -78,20 +79,28 @@ enum User_role {
 }
 
 model Product {
-  id               String          @id @unique @default(cuid())
-  title            String
-  description      String          @db.VarChar(1000)
-  priceRelation    ProductPrices[]
-  cgst             Float?
-  sgst             Float?
-  igst             Float?
-  categoryRelation Category        @relation(fields: [category], references: [id])
-  category         String
-  unitRelation     Unit?           @relation(fields: [unit], references: [id])
-  unit             String?
-  images           ProductImages[]
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  id                   String          @id @unique @default(cuid())
+  title                String
+  description          String          @db.VarChar(1000)
+  priceRelation        ProductPrices[]
+  cgst                 Float?
+  sgst                 Float?
+  igst                 Float?
+  categoryRelation     Category        @relation(fields: [category], references: [id])
+  category             String
+  manufacturerRelation Manufacturer?   @relation(fields: [manufacturer], references: [id])
+  manufacturer         String?
+  unitRelation         Unit?           @relation(fields: [unit], references: [id])
+  unit                 String?
+  images               ProductImages[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+}
+
+model Manufacturer {
+  id      String    @id @unique @default(cuid())
+  name    String
+  product Product[]
 }
 
 model Category {

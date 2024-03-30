@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/utils/tailwind-merge";
-import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 function NavLink({
   href,
@@ -33,34 +33,34 @@ export default function Navbar({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   padding?: boolean;
-  route?: "browse" | "login" | "about" | "contact";
+  route?: "home" | "browse" | "about" | "contact" | "login" | "";
 }) {
   const { data: session } = useSession();
 
   return (
     <div
       className={cn(
-        "flex w-full pt-7 pb-7",
-        padding && "pl-[15rem] pr-[15rem]",
+        "flex w-full pt-7 pb-7 items-center",
+        padding,
         className
       )}
       {...props}
     >
       <Link href="/">
         <Image
-          src="/logo.svg"
+          src="https://ik.imagekit.io/hbqsxmwrz/logo.jpg?updatedAt=1711623710644"
           className="cursor-pointer"
           width={120}
           height={24}
           alt="logo"
         />
       </Link>
-      <div className="flex gap-8 justify-end w-full text-sm font-medium align-center">
+      <div className="flex gap-8 justify-end items-center w-full text-sm font-medium">
+        <NavLink href="/" active={route === "home"}>
+          Home
+        </NavLink>
         <NavLink href="/browse" active={route === "browse"}>
           Browse
-        </NavLink>
-        <NavLink href="/login" active={route === "login"}>
-          Login
         </NavLink>
         <NavLink href="/about" active={route === "about"}>
           About
@@ -68,9 +68,12 @@ export default function Navbar({
         <NavLink href="/contact" active={route === "contact"}>
           Contact
         </NavLink>
-        {session && (
-          <NavLink
-            href="/login"
+        {!session ?
+          <Button variant={route === "login" ? "primary" : "outline"} className="align-middle" onClick={() => window.location.assign("/login")}>
+            Login / Register
+          </Button>
+          :
+          <Button variant={route === "login" ? "primary" : "outline"} className="align-middle"
             onClick={() => {
               signOut({
                 redirect: true,
@@ -82,8 +85,8 @@ export default function Navbar({
             }}
           >
             Logout
-          </NavLink>
-        )}
+          </Button>
+        }
       </div>
     </div>
   );
