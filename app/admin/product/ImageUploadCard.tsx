@@ -26,20 +26,21 @@ function ImagePreview({
   setImagesToUpload: Function;
 }) {
   return (
-    <div className="p-10 relative flex gap-5 border border-slate-200 rounded w-full h-[10rem]">
+    <div className="flex gap-5 flex-shrink-0 overflow-auto p-10 relative border border-slate-200 rounded w-full max-w-[50em] h-[10rem]">
       {images.length === 0 ? (
         <p className="m-auto text-slate-500">No images uploaded yet</p>
       ) : (
         images.map((image, i) => (
-          <div className="flex gap-3" key={i}>
-            <div className="flex flex-col gap-2">
+          <div className="grid-flow-row w-[200px] h-[200px] flex gap-3" key={i}>
+            <div className=" flex flex-col gap-2">
               <img
                 src={URL.createObjectURL(image)}
                 width={100}
                 height={100}
+                className="bg-cover overflow-clip"
                 alt=""
               />
-              <p>{image.name}</p>
+              <p className="truncate">{image.name}</p>
             </div>
             <IoMdClose
               className="self-start ml-auto cursor-pointer"

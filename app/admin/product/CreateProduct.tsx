@@ -84,6 +84,7 @@ export default function CreateProduct({
           title: productFormValues?.title ?? "",
           description: productFormValues?.description ?? "",
           category: productFormValues?.category ?? "",
+          manufacturer: productFormValues?.manufacturer ?? "",
           unit: productFormValues?.unit ?? "",
           sgst:
             productFormValues?.sgst === ""
