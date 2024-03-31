@@ -271,43 +271,43 @@ export default function ProductDetailsForm({
                                 </SelectItem>
                               ))}
                             {allCategories &&
-                            !isLoadingCategories &&
-                            !providedCategories
+                              !isLoadingCategories &&
+                              !providedCategories
                               ? [
-                                  ...(allCategories as any),
-                                  {
-                                    id: "default",
-                                    category: "Product Category",
-                                  },
-                                ]?.map((category, i) => (
-                                  <SelectItem
-                                    value={category.id}
-                                    key={i}
-                                    className={
-                                      category.id === "default"
-                                        ? "hidden"
-                                        : "block"
-                                    }
-                                  >
-                                    {category.category}
-                                  </SelectItem>
-                                ))
+                                ...(allCategories as any),
+                                {
+                                  id: "default",
+                                  category: "Product Category",
+                                },
+                              ]?.map((category, i) => (
+                                <SelectItem
+                                  value={category.id}
+                                  key={i}
+                                  className={
+                                    category.id === "default"
+                                      ? "hidden"
+                                      : "block"
+                                  }
+                                >
+                                  {category.category}
+                                </SelectItem>
+                              ))
                               : !providedCategories && (
-                                  <>
-                                    <SelectItem
-                                      value={"default"}
-                                      className="hidden"
-                                    >
-                                      Product Category
-                                    </SelectItem>
-                                    <div className="flex w-full justify-center p-3">
-                                      <BeatLoader
-                                        className="justify-center self-center"
-                                        size={10}
-                                      />
-                                    </div>
-                                  </>
-                                )}
+                                <>
+                                  <SelectItem
+                                    value={"default"}
+                                    className="hidden"
+                                  >
+                                    Product Category
+                                  </SelectItem>
+                                  <div className="flex w-full justify-center p-3">
+                                    <BeatLoader
+                                      className="justify-center self-center"
+                                      size={10}
+                                    />
+                                  </div>
+                                </>
+                              )}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -364,35 +364,35 @@ export default function ProductDetailsForm({
                               ))}
                             {!isLoadingUnits && !providedCategories
                               ? [
-                                  ...(allUnits as any),
-                                  { id: "default", category: "Product Unit" },
-                                ]?.map((unit, i) => (
-                                  <SelectItem
-                                    value={unit.id}
-                                    key={i}
-                                    className={
-                                      unit.id === "default" ? "hidden" : "block"
-                                    }
-                                  >
-                                    {unit.unit}
-                                  </SelectItem>
-                                ))
+                                ...(allUnits as any),
+                                { id: "default", category: "Product Unit" },
+                              ]?.map((unit, i) => (
+                                <SelectItem
+                                  value={unit.id}
+                                  key={i}
+                                  className={
+                                    unit.id === "default" ? "hidden" : "block"
+                                  }
+                                >
+                                  {unit.unit}
+                                </SelectItem>
+                              ))
                               : !providedUnits && (
-                                  <>
-                                    <SelectItem
-                                      value="default"
-                                      className="hidden"
-                                    >
-                                      Product Unit
-                                    </SelectItem>
-                                    <div className="flex w-full justify-center p-3">
-                                      <BeatLoader
-                                        className="justify-center self-center"
-                                        size={10}
-                                      />
-                                    </div>
-                                  </>
-                                )}
+                                <>
+                                  <SelectItem
+                                    value="default"
+                                    className="hidden"
+                                  >
+                                    Product Unit
+                                  </SelectItem>
+                                  <div className="flex w-full justify-center p-3">
+                                    <BeatLoader
+                                      className="justify-center self-center"
+                                      size={10}
+                                    />
+                                  </div>
+                                </>
+                              )}
                           </SelectContent>
                         </Select>
                       </FormControl>
