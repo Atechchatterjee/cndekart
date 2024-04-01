@@ -8,6 +8,7 @@ import { AiFillShop } from "react-icons/ai";
 import { BsCloudUploadFill } from "react-icons/bs";
 import { cn } from "@/lib/utils";
 import { IoMdClose } from "react-icons/io";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface ImageUploadCardProps {
   images: any[];
@@ -16,6 +17,7 @@ interface ImageUploadCardProps {
   onCreate?: () => void;
   isLoading?: boolean;
   forUpdate?: boolean;
+  btnText?: string;
 }
 
 function ImagePreview({
@@ -26,48 +28,50 @@ function ImagePreview({
   setImagesToUpload: Function;
 }) {
   return (
-    <div className="flex gap-5 flex-shrink-0 overflow-auto p-10 relative border border-slate-200 rounded w-full max-w-[50em] h-[10rem]">
-      {images.length === 0 ? (
-        <p className="m-auto text-slate-500">No images uploaded yet</p>
-      ) : (
-        images.map((image, i) => (
-          <div className="grid-flow-row w-[200px] h-[200px] flex gap-3" key={i}>
-            <div className=" flex flex-col gap-2">
-              <img
-                src={URL.createObjectURL(image)}
-                width={100}
-                height={100}
-                className="bg-cover overflow-clip"
-                alt=""
+    <ScrollArea className="w-[50rem] whitespace-nowrap rounded-md border">
+      <div className="flex w-full h-[10rem] space-x-10 p-4 items-center justify-center">
+        {images.length > 0 ? (
+          images.map((image, i) => (
+            <div key={i} className="relative shrink-0">
+              <div className="overflow-hidden rounded-md">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Photo by ${image}`}
+                  className="object-cover"
+                  width={100}
+                  height={100}
+                />
+              </div>
+              <IoMdClose
+                className="absolute top-0 right-0 mr-[-1.5rem] cursor-pointer"
+                onClick={() => {
+                  const newImages = images.filter((img) => {
+                    console.log({
+                      imgname: img.name,
+                      imglastModified: img.lastModified,
+                    });
+                    console.log({
+                      imagename: image.name,
+                      imagelastModified: image.lastModified,
+                    });
+                    if (
+                      img.name !== image.name &&
+                      img.lastModified !== image.lastModified
+                    )
+                      return image;
+                  });
+                  console.log(newImages);
+                  setImagesToUpload(newImages);
+                }}
               />
-              <p className="truncate">{image.name}</p>
             </div>
-            <IoMdClose
-              className="self-start ml-auto cursor-pointer"
-              onClick={() => {
-                const newImages = images.filter((img) => {
-                  console.log({
-                    imgname: img.name,
-                    imglastModified: img.lastModified,
-                  });
-                  console.log({
-                    imagename: image.name,
-                    imagelastModified: image.lastModified,
-                  });
-                  if (
-                    img.name !== image.name &&
-                    img.lastModified !== image.lastModified
-                  )
-                    return image;
-                });
-                console.log(newImages);
-                setImagesToUpload(newImages);
-              }}
-            />
-          </div>
-        ))
-      )}
-    </div>
+          ))
+        ) : (
+          <span className="justify-self-center">No images to preview</span>
+        )}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }
 
@@ -78,13 +82,14 @@ export default function ImageUploadCard({
   onCreate,
   isLoading,
   forUpdate, // if this component is being used for updating/editing a product
+  btnText,
 }: ImageUploadCardProps) {
   const handleDrop = useCallback((files: any) => {
     uploadCb && uploadCb(files);
   }, []);
 
   return (
-    <Card className="flex-1">
+    <Card className="flex-1 max-w-[53rem]">
       <CardContent className="flex flex-col gap-5">
         <Dropzone onDrop={handleDrop}>
           {({ isDragActive, getRootProps, getInputProps }) => (
@@ -127,7 +132,13 @@ export default function ImageUploadCard({
           ) : (
             <>
               <AiFillShop size="1.2rem" />
-              <span>{forUpdate ? "Update Product" : "Create Product"}</span>
+              <span>
+                {btnText
+                  ? btnText
+                  : forUpdate
+                  ? "Update Product"
+                  : "Create Product"}
+              </span>
             </>
           )}
         </Button>

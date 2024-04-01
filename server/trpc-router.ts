@@ -20,6 +20,13 @@ import {
   createManufacturer,
   deleteManufacturer,
 } from "./routers/product-route";
+import {
+  createProject,
+  updateProjectWithImageUrl,
+  fetchProject,
+  fetchAllProject,
+  deleteProject,
+} from "./routers/project-route";
 
 export const t = initTRPC.create({
   transformer: superjson,
@@ -44,6 +51,11 @@ export const appRouter = t.router({
   fetchAllManufacturer: fetchAllManufacturer(),
   createManufacturer: createManufacturer(),
   deleteManufacturer: deleteManufacturer(),
+  createProject: createProject(),
+  updateProjectWithImageUrl: updateProjectWithImageUrl(),
+  fetchProject: fetchProject(),
+  fetchAllProject: fetchAllProject(),
+  deleteProject: deleteProject(),
 });
 
 export type AppRouter = typeof appRouter;
