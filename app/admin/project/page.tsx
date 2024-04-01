@@ -25,6 +25,7 @@ import { BiLinkExternal } from "react-icons/bi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MdDelete } from "react-icons/md";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProjectFormValues {
   title: string;
@@ -44,12 +45,16 @@ function ProjectCard({
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const deleteProjectMutation = trpc.deleteProject.useMutation();
 
+  const { toast } = useToast();
+
   return (
     <Card className="flex gap-5 p-5 w-full" key={i}>
-      <img
-        src={project.images[0].imageUrl}
-        className="w-[250px] h-[250px] object-fill"
-      />
+      {project.images.length > 0 && (
+        <img
+          src={project.images[0]?.imageUrl}
+          className="w-[250px] h-[250px] object-fill"
+        />
+      )}
       <div className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">{project.title}</h2>
         <p className="text-ellipses overflow-clip max-h-[95px]">
@@ -77,6 +82,9 @@ function ProjectCard({
               navigator.clipboard.writeText(
                 `${window.location.host}/project/${project.id}`
               );
+              toast({
+                description: "project url copied",
+              });
             }}
           >
             <IoCopyOutline />
