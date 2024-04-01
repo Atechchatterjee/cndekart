@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import type { IconType } from "react-icons/lib";
 import { signOut } from "next-auth/react";
 import { Button } from "./ui/button";
+import { FaListUl } from "react-icons/fa";
 
 function DashboardItem({
   variant,
@@ -45,7 +46,7 @@ function DashboardItem({
 export default function AdminSidebar({
   active,
 }: {
-  active?: "dashboard" | "product" | "queries" | "orders";
+  active?: "dashboard" | "product" | "project" | "queries" | "orders";
 }) {
   return (
     <div className="fixed flex flex-col top-3 left-3 bottom-3 w-80 bg-white border-r rounded-lg overflow-y-auto overflow-x-hidden">
@@ -72,6 +73,12 @@ export default function AdminSidebar({
           href="/admin/product"
           icon={BsFillRocketTakeoffFill}
           text="Product"
+        />
+        <DashboardItem
+          variant={active === "project" ? "active" : "inactive"}
+          href="/admin/project"
+          icon={FaListUl}
+          text="Project"
         />
         <DashboardItem
           variant={active === "queries" ? "active" : "inactive"}
