@@ -28,7 +28,7 @@ function ImagePreview({
   setImagesToUpload: Function;
 }) {
   return (
-    <ScrollArea className="w-[50rem] whitespace-nowrap rounded-md border">
+    <ScrollArea className="w-[45rem] whitespace-nowrap rounded-md border">
       <div className="flex w-full h-[10rem] space-x-10 p-4 items-center justify-center">
         {images.length > 0 ? (
           images.map((image, i) => (

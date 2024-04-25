@@ -3,9 +3,20 @@
 import { staatlitches } from "@/app/fonts";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import Tiptap from "@/components/Tiptap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/utils/tailwind-merge";
 import { trpc } from "@/utils/trpc";
+
+function parseJSONSafely(content: string) {
+  try {
+    let parsedJSON = JSON.parse(content);
+    return parsedJSON;
+  } catch (err) {
+    console.error(err);
+    return {};
+  }
+}
 
 export default function ProductEdit({
   params,
@@ -37,7 +48,7 @@ export default function ProductEdit({
               <h1
                 className={cn(
                   staatlitches.className,
-                  "text-[3rem] w-[80%] leading-tight mt-[3rem]"
+                  "text-[3rem] w-[80%] leading-tight mt-[3rem] font-medium"
                 )}
               >
                 {projects.data?.title}
@@ -48,12 +59,15 @@ export default function ProductEdit({
                   <img
                     key={i}
                     src={image.imageUrl}
-                    className="h-full w-full object-fill"
+                    className="h-full w-full max-w-[500px] max-h-[500px] object-cover"
                   />
                 ))}
               </div>
               <div className="mt-[2rem]">
-                <p className="text-lg">{projects.data?.description}</p>
+                <Tiptap
+                  content={parseJSONSafely(projects.data?.description || "")}
+                  editable={false}
+                />
               </div>
             </>
           )}
