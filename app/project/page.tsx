@@ -94,7 +94,7 @@ export default function Project() {
   return (
     <>
       <div className="w-[100rem] m-auto">
-        <Navbar route="browse" padding={false} />
+        <Navbar route="project" padding={false} />
         <div className="flex flex-col gap-5 w-full mt-[3rem]">
           <div className="flex flex-col gap-1">
             <h1 className="text-2xl text-slate-600 font-bold">Our Projects</h1>
