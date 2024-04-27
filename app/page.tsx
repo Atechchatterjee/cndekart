@@ -18,7 +18,7 @@ function HomePage() {
           <h1
             className={cn(
               staatlitches.className,
-              "text-[5.3rem] w-[80%] leading-tight"
+              "text-[5.3rem] w-[80%] leading-tight font-medium"
             )}
           >
             GET <span className="text-primary">STEEL GOODS </span>&{" "}
@@ -135,7 +135,7 @@ function HomePage() {
             <h4
               className={cn(
                 staatlitches.className,
-                "text-[3rem] w-[80%] leading-tight"
+                "text-[3rem] w-[80%] leading-tight font-medium"
               )}
             >
               Why Consider Us?
@@ -165,7 +165,7 @@ function HomePage() {
             <div
               className={cn(
                 staatlitches.className,
-                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500 hover:shadow-2xl"
+                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500 hover:shadow-2xl font-medium"
               )}
             >
               <p className="text-[4.5rem]">50+</p>
@@ -174,7 +174,7 @@ function HomePage() {
             <div
               className={cn(
                 staatlitches.className,
-                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500  hover:shadow-2xl"
+                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500  hover:shadow-2xl font-medium"
               )}
             >
               <p className="text-[4.5rem]">70+</p>
@@ -183,7 +183,7 @@ function HomePage() {
             <div
               className={cn(
                 staatlitches.className,
-                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500 hover:shadow-2xl"
+                "transition-all hover:cursor-pointer hover:bg-primary hover:text-white p-[1.5rem] text-primary border border-primary rounded-3xl h-fit w-full hover:scale-105 duration-500 hover:shadow-2xl font-medium"
               )}
             >
               <p className="text-[4.5rem]">20+</p>
@@ -195,7 +195,7 @@ function HomePage() {
           <h4
             className={cn(
               staatlitches.className,
-              "text-[3rem] w-[80%] leading-tight"
+              "text-[3rem] w-[80%] leading-tight font-medium"
             )}
           >
             Providing Solutions for decades

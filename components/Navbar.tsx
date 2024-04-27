@@ -33,7 +33,7 @@ export default function Navbar({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   padding?: boolean;
-  route?: "home" | "browse" | "about" | "contact" | "login" | "";
+  route?: "home" | "browse" | "about" | "contact" | "project" | "login" | "";
 }) {
   const { data: session } = useSession();
 
@@ -62,11 +62,14 @@ export default function Navbar({
         <NavLink href="/browse" active={route === "browse"}>
           Browse
         </NavLink>
-        <NavLink href="/about" active={route === "about"}>
+        <NavLink href="/about" active={route === "about"} className="hidden">
           About
         </NavLink>
-        <NavLink href="/contact" active={route === "contact"}>
+        <NavLink href="/contact" active={route === "contact"} className="hidden">
           Contact
+        </NavLink>
+        <NavLink href="/project" active={route === "project"}>
+          Projects
         </NavLink>
         {!session ?
           <Button variant={route === "login" ? "primary" : "outline"} className="align-middle" onClick={() => window.location.assign("/login")}>

@@ -10,7 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import UnauthorisedPage from "@/components/UnauthorisedPage";
 import { trpc } from "@/utils/trpc";
 import { useQuery } from "@tanstack/react-query";
@@ -26,11 +25,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MdDelete } from "react-icons/md";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useToast } from "@/components/ui/use-toast";
+import Tiptap from "@/components/Tiptap";
 
 interface ProjectFormValues {
   title: string;
   description: string;
   price: string;
+}
+
+function parseJSONSafely(content: string) {
+  try {
+    let parsedJSON = JSON.parse(content);
+    return parsedJSON;
+  } catch (err) {
+    console.error(err);
+    return {};
+  }
 }
 
 function ProjectCard({
@@ -52,17 +62,25 @@ function ProjectCard({
       {project.images.length > 0 && (
         <img
           src={project.images[0]?.imageUrl}
-          className="w-[250px] h-[250px] object-fill"
+          className="min-w-[350px] max-w-[350px] h-[250px] object-cover rounded-md"
         />
       )}
       <div className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">{project.title}</h2>
-        <p className="text-ellipses overflow-clip max-h-[95px]">
-          {project.description}
+        <p className="line-clamp-1 max-h-[5rem] overflow-clip">
+          <Tiptap
+            content={parseJSONSafely(project.description || "")}
+            editable={false}
+            textMode
+          />
         </p>
-        <div className="p-2 flex gap-3 mt-auto">
-          <p className="font-semibold pb-4">Price: </p>
-          <p>₹{project.price}</p>
+        <div className="p-[2 2] flex gap-3 mt-auto">
+          {project.price && (
+            <>
+              <p className="font-semibold pb-4">Price: </p>
+              <p>₹{project.price}</p>
+            </>
+          )}
         </div>
         <div className="flex gap-3">
           <Button
@@ -137,6 +155,7 @@ function Project() {
   const [createProjectLoading, setCreateProjectLoading] =
     useState<boolean>(false);
   const allProjects = trpc.fetchAllProject.useQuery({});
+  const [clearDescription, setClearDescription] = useState<boolean>(false);
 
   useQuery({
     enabled: createProjectTrigger,
@@ -144,9 +163,11 @@ function Project() {
     queryFn: async function createProject() {
       setCreateProjectLoading(true);
       const project = form.getValues();
+      console.log({ project });
       const res = createProjectMutation.mutate(project, {
         onSuccess: async (createProject) => {
           const formData = new FormData();
+          console.log(formData);
           imagesToUpload.forEach((imageToUpload, i) =>
             formData.append(`image-${i}`, imageToUpload as any)
           );
@@ -169,11 +190,16 @@ function Project() {
                 setImagesToUpload([]);
                 setCreateProjectLoading(false);
                 allProjects.refetch();
+                setClearDescription(true);
+              },
+              onError: () => {
+                console.error("Could update with images");
               },
             }
           );
         },
         onError: () => {
+          console.error("Could not create a project");
           setCreateProjectTrigger(false);
           setCreateProjectLoading(false);
         },
@@ -183,7 +209,6 @@ function Project() {
   });
 
   const [imagesToUpload, setImagesToUpload] = useState<any[]>([]);
-  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   if (status === "authenticated")
     return (
@@ -203,7 +228,7 @@ function Project() {
               </p>
             </div>
             <div className="flex gap-5 mt-10">
-              <Card className="flex flex-col p-4 min-w-[50rem]">
+              <Card className="flex flex-col p-4 w-full">
                 <FormProvider {...form}>
                   <form className="space-y-2">
                     <FormField
@@ -226,10 +251,14 @@ function Project() {
                         <FormItem>
                           <FormLabel>Description</FormLabel>
                           <FormControl>
-                            <Textarea
+                            <Tiptap
                               placeholder="description"
-                              className="h-[23rem]"
-                              {...field}
+                              content={field.value}
+                              onChange={field.onChange}
+                              clear={clearDescription}
+                              setClear={(clearValue: boolean) => {
+                                setClearDescription(clearValue);
+                              }}
                             />
                           </FormControl>
                           <FormMessage />

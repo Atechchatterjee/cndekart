@@ -60,8 +60,18 @@ export function deleteProject() {
         });
         const imagekitPromise = imagekit.bulkDeleteFiles(input.imageIds);
 
-        await prisma.project.delete({ where: { id: input.projectId } });
-        await imagekitPromise;
+        try {
+          await prisma.project.delete({ where: { id: input.projectId } });
+        } catch (err) {
+          console.error("prisma rejection");
+          throw err;
+        }
+        try {
+          if (input.imageIds.length > 0) await imagekitPromise;
+        } catch (err) {
+          console.error("imagekit promise rejection");
+          throw err;
+        }
         return { status: 200 };
       } catch (err) {
         throw err;
