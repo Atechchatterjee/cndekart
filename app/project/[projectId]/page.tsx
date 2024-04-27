@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { staatlitches } from "@/app/fonts";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -7,6 +8,15 @@ import Tiptap from "@/components/Tiptap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/utils/tailwind-merge";
 import { trpc } from "@/utils/trpc";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { ProductImages, ProjectImages } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 
 function parseJSONSafely(content: string) {
   try {
@@ -28,7 +38,7 @@ export default function ProductEdit({
 
   return (
     <>
-      <div className="w-[100rem] m-auto">
+      <div className="w-[70rem] m-auto">
         <Navbar route="browse" padding={false} />
         <div className="min-h-[70vh]">
           {projects.isLoading ? (
@@ -48,22 +58,42 @@ export default function ProductEdit({
               <h1
                 className={cn(
                   staatlitches.className,
-                  "text-[3rem] w-[80%] leading-tight mt-[3rem] font-medium"
+                  "text-[3.4rem] w-[80%] leading-tight mt-[3rem] font-medium"
                 )}
               >
                 {projects.data?.title}
               </h1>
               <p>These are some images of this project</p>
-              <div className="grid grid-cols-3 gap-4 w-full mt-[3rem]">
-                {projects.data?.images.map((image, i) => (
-                  <img
-                    key={i}
-                    src={image.imageUrl}
-                    className="h-full w-full max-w-[500px] max-h-[500px] object-cover"
-                  />
-                ))}
-              </div>
-              <div className="mt-[2rem]">
+              <Carousel className="w-full mt-[3rem] h-[15rem]">
+                <CarouselContent className="select-none">
+                  {projects.data?.images.map((image, i) => (
+                    <CarouselItem
+                      key={i}
+                      className={
+                        projects.data?.images &&
+                        projects.data?.images.length >= 3
+                          ? "md:basis-1/2 lg:basis-1/3"
+                          : projects.data?.images.length == 2
+                          ? "md:basis-1/2"
+                          : ""
+                      }
+                    >
+                      <img
+                        key={i}
+                        src={image.imageUrl}
+                        className="h-[25rem] object-cover"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {projects.data?.images && projects.data?.images.length > 1 && (
+                  <>
+                    <CarouselPrevious className="mt-[5rem]" />
+                    <CarouselNext className="mt-[5rem]" />
+                  </>
+                )}
+              </Carousel>
+              <div className="mt-[15rem]">
                 <Tiptap
                   content={parseJSONSafely(projects.data?.description || "")}
                   editable={false}
@@ -71,6 +101,11 @@ export default function ProductEdit({
               </div>
             </>
           )}
+          <div className="mt-[3rem]">
+            <a href="/project" className="text-primary font-semibold">
+              More Projects
+            </a>
+          </div>
         </div>
       </div>
       {!projects.isLoading && <Footer />}

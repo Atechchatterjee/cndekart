@@ -62,20 +62,25 @@ function ProjectCard({
       {project.images.length > 0 && (
         <img
           src={project.images[0]?.imageUrl}
-          className="w-[250px] h-[250px] object-fill"
+          className="min-w-[350px] max-w-[350px] h-[250px] object-cover rounded-md"
         />
       )}
       <div className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">{project.title}</h2>
-        <p className="text-ellipses overflow-clip max-h-[95px]">
+        <p className="line-clamp-1 max-h-[5rem] overflow-clip">
           <Tiptap
             content={parseJSONSafely(project.description || "")}
             editable={false}
+            textMode
           />
         </p>
-        <div className="p-2 flex gap-3 mt-auto">
-          <p className="font-semibold pb-4">Price: </p>
-          <p>₹{project.price}</p>
+        <div className="p-[2 2] flex gap-3 mt-auto">
+          {project.price && (
+            <>
+              <p className="font-semibold pb-4">Price: </p>
+              <p>₹{project.price}</p>
+            </>
+          )}
         </div>
         <div className="flex gap-3">
           <Button

@@ -16,6 +16,7 @@ import { Heading } from "@tiptap/extension-heading";
 import { BulletList } from "@tiptap/extension-bullet-list";
 import { Underline } from "@tiptap/extension-underline";
 import { Placeholder } from "@tiptap/extension-placeholder";
+import { CustomParagraph } from "./tiptap-components/customParagraph";
 import { MdFormatUnderlined } from "react-icons/md";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { Indent } from "./tiptap-components/indent";
@@ -29,6 +30,7 @@ const Tiptap = ({
   editable = true,
   clear = false,
   setClear,
+  textMode = false,
   toolbar = editable,
   ...props
 }: {
@@ -36,6 +38,7 @@ const Tiptap = ({
   onChange?: Function;
   toolbar?: boolean;
   clear?: boolean;
+  textMode?: boolean;
   placeholder?: string;
   setClear?: Function;
 } & Partial<EditorOptions>) => {
@@ -54,12 +57,13 @@ const Tiptap = ({
         keepAttributes: false,
         keepMarks: false,
       }),
+      CustomParagraph.configure({}),
     ],
     content: content,
     editorProps: {
       attributes: {
         class: editable
-          ? "rounded-md border min-h-[23rem] border-input p-3 pl-4"
+          ? "rounded-md border min-h-[23rem] border-input p-3 pl-4 text-md"
           : "",
       },
     },
@@ -69,6 +73,7 @@ const Tiptap = ({
     ...props,
   });
 
+  // clears the editor contents (when needed)
   useEffect(() => {
     if (editor && clear) {
       editor.commands.clearContent();
@@ -76,7 +81,13 @@ const Tiptap = ({
         setClear(false);
       }
     }
-  });
+  }, [editor, clear]);
+
+  // makes sure the editor renders only the text output (when needed)
+  useEffect(() => {
+    if (editor && textMode)
+      editor.commands.setContent(editor.state.doc.textContent);
+  }, [editor, textMode]);
 
   if (!editor) return <></>;
 
