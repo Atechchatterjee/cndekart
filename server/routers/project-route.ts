@@ -52,13 +52,6 @@ export function deleteProject() {
     .mutation(async ({ input }) => {
       try {
         console.log(input.imageIds);
-        // deleting images from imagekit
-        const imagekit = new ImageKit({
-          urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "",
-          publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "",
-          privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "",
-        });
-        const imagekitPromise = imagekit.bulkDeleteFiles(input.imageIds);
 
         try {
           await prisma.project.delete({ where: { id: input.projectId } });
@@ -67,7 +60,16 @@ export function deleteProject() {
           throw err;
         }
         try {
-          if (input.imageIds.length > 0) await imagekitPromise;
+          if (input.imageIds.length > 0) {
+            // deleting images from imagekit
+            const imagekit = new ImageKit({
+              urlEndpoint: process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT ?? "",
+              publicKey: process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY ?? "",
+              privateKey: process.env.IMAGEKIT_PRIVATE_KEY ?? "",
+            });
+            const imagekitPromise = imagekit.bulkDeleteFiles(input.imageIds);
+            await imagekitPromise;
+          }
         } catch (err) {
           console.error("imagekit promise rejection");
           throw err;
