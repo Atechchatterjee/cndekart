@@ -9,33 +9,37 @@ import { BsCloudUploadFill } from "react-icons/bs";
 import { cn } from "@/lib/utils";
 import { IoMdClose } from "react-icons/io";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { UploadedBlob } from "./page";
 
-interface ImageUploadCardProps {
-  images: any[];
-  setImagesToUpload: (images: any[]) => void;
+interface ProjectImageUploadCardProps {
+  images: UploadedBlob[];
+  setImagesToUpload: (images: UploadedBlob[]) => void;
   onUpload?: (images: any[]) => void;
   onCreate?: () => void;
   isLoading?: boolean;
   forUpdate?: boolean;
   btnText?: string;
 }
+function instanceOfUploadedBlob(image: any): image is UploadedBlob {
+  return 'id' in image && 'image' in image;
+}
 
 function ImagePreview({
   images,
   setImagesToUpload,
 }: {
-  images: any[];
+  images: UploadedBlob[];
   setImagesToUpload: Function;
 }) {
   return (
     <ScrollArea className="w-[45rem] whitespace-nowrap rounded-md border">
       <div className="flex w-full h-[10rem] space-x-10 p-4 items-center justify-center">
         {images.length > 0 ? (
-          images.map((image, i) => (
+          images.filter((img) => ["added", "normal"].includes(img.status)).map((image, i) => (
             <div key={i} className="relative shrink-0">
               <div className="overflow-hidden rounded-md">
                 <img
-                  src={URL.createObjectURL(image)}
+                  src={URL.createObjectURL(image.image)}
                   alt={`Photo by ${image}`}
                   className="object-cover"
                   width={100}
@@ -45,20 +49,10 @@ function ImagePreview({
               <IoMdClose
                 className="absolute top-0 right-0 mr-[-1.5rem] cursor-pointer"
                 onClick={() => {
-                  const newImages = images.filter((img) => {
-                    console.log({
-                      imgname: img.name,
-                      imglastModified: img.lastModified,
-                    });
-                    console.log({
-                      imagename: image.name,
-                      imagelastModified: image.lastModified,
-                    });
-                    if (
-                      img.name !== image.name &&
-                      img.lastModified !== image.lastModified
-                    )
-                      return image;
+                  const newImages = images.map((img) => {
+                    if (img.id === image.id)
+                      return { ...img, status: img.status === "added" ? "added-deleted" : "deleted" }
+                    else return img;
                   });
                   console.log(newImages);
                   setImagesToUpload(newImages);
@@ -75,15 +69,14 @@ function ImagePreview({
   );
 }
 
-export default function ImageUploadCard({
+export default function ProjectImageUploadCard({
   images,
   setImagesToUpload,
   onUpload: uploadCb,
   onCreate,
   isLoading,
-  forUpdate, // if this component is being used for updating/editing a product
   btnText,
-}: ImageUploadCardProps) {
+}: ProjectImageUploadCardProps) {
   const handleDrop = useCallback((files: any) => {
     uploadCb && uploadCb(files);
   }, []);
@@ -133,11 +126,7 @@ export default function ImageUploadCard({
             <>
               <AiFillShop size="1.2rem" />
               <span>
-                {btnText
-                  ? btnText
-                  : forUpdate
-                    ? "Update Product"
-                    : "Create Product"}
+                {btnText || "submit"}
               </span>
             </>
           )}

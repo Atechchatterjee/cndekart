@@ -26,6 +26,8 @@ import {
   fetchProject,
   fetchAllProject,
   deleteProject,
+  updateProject,
+  deleteProjectImages,
 } from "./routers/project-route";
 
 export const t = initTRPC.create({
@@ -56,6 +58,8 @@ export const appRouter = t.router({
   fetchProject: fetchProject(),
   fetchAllProject: fetchAllProject(),
   deleteProject: deleteProject(),
+  updateProject: updateProject(),
+  deleteProjectImages: deleteProjectImages(),
 });
 
 export type AppRouter = typeof appRouter;

@@ -26,6 +26,7 @@ import { MdDelete } from "react-icons/md";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useToast } from "@/components/ui/use-toast";
 import Tiptap from "@/components/Tiptap";
+import { RiEditBoxFill, RiEditBoxLine } from "react-icons/ri";
 
 interface ProjectFormValues {
   title: string;
@@ -107,6 +108,16 @@ function ProjectCard({
           >
             <IoCopyOutline />
             Copy Url
+          </Button>
+          <Button
+            variant="outline"
+            className="w-[8rem] flex gap-3 hover:text-white"
+            onClick={() => {
+              window.open(`/admin/project/${project.id}`, "_blank");
+            }}
+          >
+            <RiEditBoxLine />
+            Edit
           </Button>
           <Button
             variant="destructive-outline"

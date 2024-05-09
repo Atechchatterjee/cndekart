@@ -91,7 +91,7 @@ const updateIndentLevel = (tr, delta) => {
 export const Indent = Extension.create({
   name: "indent",
 
-  defaultOptions: {
+  addOptions: {
     types: ["heading", "paragraph"],
     indentLevels: [0, 30, 60, 90, 120, 150, 180, 210],
     defaultIndentLevel: 0,
