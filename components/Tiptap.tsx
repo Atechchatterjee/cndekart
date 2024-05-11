@@ -20,8 +20,10 @@ import { CustomParagraph } from "./tiptap-components/customParagraph";
 import { MdFormatUnderlined } from "react-icons/md";
 import { MdOutlineFormatListBulleted } from "react-icons/md";
 import { Indent } from "./tiptap-components/indent";
+import TextAlign from '@tiptap/extension-text-align'
 import { LuIndent, LuOutdent } from "react-icons/lu";
 import { useEffect } from "react";
+import { RxTextAlignLeft, RxTextAlignRight, RxTextAlignJustify } from "react-icons/rx";
 
 const Tiptap = ({
   content,
@@ -50,6 +52,9 @@ const Tiptap = ({
         levels: [1, 2, 3, 4, 5, 6],
       }),
       Indent.configure({}),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
       Underline.configure({}),
       Placeholder.configure({ placeholder: placeholder }),
       BulletList.configure({
@@ -118,6 +123,30 @@ const Tiptap = ({
             }}
           >
             <MdFormatUnderlined size={16} />
+          </Toggle>
+          <Toggle
+            pressed={editor.isActive("underline")}
+            onPressedChange={() => {
+              editor.chain().focus().setTextAlign("left").run();
+            }}
+          >
+            <RxTextAlignLeft size={16} />
+          </Toggle>
+          <Toggle
+            pressed={editor.isActive("underline")}
+            onPressedChange={() => {
+              editor.chain().focus().setTextAlign("right").run();
+            }}
+          >
+            <RxTextAlignRight size={16} />
+          </Toggle>
+          <Toggle
+            pressed={editor.isActive("underline")}
+            onPressedChange={() => {
+              editor.chain().focus().setTextAlign("justify").run();
+            }}
+          >
+            <RxTextAlignJustify size={16} />
           </Toggle>
           <Toggle
             pressed={editor.isActive("heading", { level: 1 })}
